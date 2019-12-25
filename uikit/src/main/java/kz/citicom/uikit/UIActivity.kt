@@ -14,7 +14,7 @@ open class UIActivity : Activity() {
     }
 
     override fun setContentView(view: View?) {
-        throw Exception("USE container addChild")
+        throw Exception("USE container addChild v")
     }
 
     override fun setContentView(layoutResID: Int) {
