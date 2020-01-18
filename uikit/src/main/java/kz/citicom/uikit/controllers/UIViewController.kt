@@ -2,14 +2,16 @@ package kz.citicom.uikit.controllers
 
 import android.content.Context
 import androidx.annotation.CallSuper
+import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.tools.UIEdgeInsets
 import kz.citicom.uikit.tools.UIScreen
+import kz.citicom.uikit.tools.WeakRef
 import kz.citicom.uikit.tools.zero
 import kz.citicom.uikit.views.UIView
 import kz.citicom.uikit.views.removeChilds
 import kz.citicom.uikit.views.removeFromSuperview
 
-abstract class UIViewController(protected val context: Context) {
+abstract class UIViewController(context: UIActivity) {
     private var _view: UIView? = null
     protected val view: UIView = UIView(context)
 
@@ -24,8 +26,8 @@ abstract class UIViewController(protected val context: Context) {
         }
 
     fun getWrap(): UIView {
-        if (this.isDestroyed) {
-            this.isDestroyed = false
+        if (this._view != null) {
+            return this._view!!
         }
         if (this._view == null) {
             this.view.removeChilds()
@@ -63,6 +65,7 @@ abstract class UIViewController(protected val context: Context) {
     open fun viewDidDisappear() {
     }
 
+    @CallSuper
     internal fun destroy() {
         this.isDestroyed = true
         this._view = null

@@ -15,7 +15,7 @@ open class UIOverlayWindow(context: Context) { //todo add rootController: UIView
             super.onCreate(savedInstanceState)
 
             val currentWindow = this.window
-            currentWindow?.setWindowAnimations(R.style.WindowNoAnimation)
+//            currentWindow?.setWindowAnimations(R.style.WindowNoAnimation)
             setContentView(
                 contentView,
                 LayoutHelper.createFrame(

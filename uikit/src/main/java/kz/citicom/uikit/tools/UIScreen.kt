@@ -17,7 +17,7 @@ object UIScreen {
     val displayMetrics = DisplayMetrics()
     private var point: Point? = null
     private var screenPoint: Point? = null
-    private var statusBarHeight: Int = 0
+    var statusBarHeight: Int = 0
 
     fun init(context: Context) {
         this.appContext = context

@@ -4,13 +4,24 @@ import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.FrameLayout
+import kz.citicom.uikit.views.ActivityContentLayout
+import kz.citicom.uikit.views.UIWindow
 
-open class UIActivity : Activity() {
+open abstract class UIActivity : Activity() {
+    internal lateinit var view: ActivityContentLayout
+    abstract var uiWindow: UIWindow?
+    val keyWindows: HashMap<String, UIWindow> = hashMapOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        setTheme(R.style.Theme_UIKit)
+
         super.onCreate(savedInstanceState)
 
-        super.setContentView(FrameLayout(this))
+        this.view = ActivityContentLayout(this)
+        super.setContentView(this.view)
     }
 
     override fun setContentView(view: View?) {
@@ -23,5 +34,9 @@ open class UIActivity : Activity() {
 
     override fun setContentView(view: View?, params: ViewGroup.LayoutParams?) {
         throw Exception("USE container addChild")
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }

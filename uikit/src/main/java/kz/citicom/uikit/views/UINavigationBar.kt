@@ -1,18 +1,14 @@
 package kz.citicom.uikit.views
 
 import android.content.Context
+import android.graphics.Color
 import android.view.View
+import android.widget.FrameLayout
 
-class UINavigationBar(context: Context?) : View(context) {
+class UINavigationBar(context: Context) : FrameLayout(context) {
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val width = MeasureSpec.getSize(widthMeasureSpec)
-        val height = MeasureSpec.getSize(heightMeasureSpec)
-
-        setMeasuredDimension(
-            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST)
-        )
+    init {
+        setBackgroundColor(Color.RED)
     }
 
 }
