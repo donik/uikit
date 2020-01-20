@@ -2,12 +2,13 @@ package kz.citicom.uikit.controllers.navigationController
 
 import android.content.Context
 import android.view.View
+import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.tools.LayoutHelper
 import kz.citicom.uikit.tools.weak
 import kz.citicom.uikit.views.UIView
 
-open class UINavigationController(context: Context) : UIViewController(context) {
+open class UINavigationController(context: UIActivity) : UIViewController(context) {
     private val processor: UINavigationControllerProcessor = UINavigationControllerProcessor()
     private var foregroundContentView: UIView = UIView(context)
     private var backgroundContentView: UIView = UIView(context)
@@ -26,13 +27,13 @@ open class UINavigationController(context: Context) : UIViewController(context) 
 
     fun push(viewController: UIViewController, animated: Boolean = true) {
         //todo check push allow !!!
-        val weakSelf by weak(this)
-        this.processor.push(viewController, animated)
+//        val weakSelf by weak(this)
+//        this.processor.push(viewController, animated)
     }
 
     fun popViewController(animated: Boolean) {
         //todo check pop allow !!!
-        this.processor.pop(animated)
+//        this.processor.pop(animated)
     }
 
     override fun onBackPressed(): Boolean {

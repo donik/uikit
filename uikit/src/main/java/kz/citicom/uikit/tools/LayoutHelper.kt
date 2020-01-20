@@ -6,7 +6,7 @@ object LayoutHelper {
     const val MATCH_PARENT = -1
     const val WRAP_CONTENT = -2
 
-    fun getSize(size: Int): Int {
+    private fun getSize(size: Int): Int {
         return if (size < 0) size else UIScreen.dp(size.toFloat())
     }
 

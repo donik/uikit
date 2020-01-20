@@ -15,3 +15,4 @@ data class CGPoint(var x: Float, var y: Float)
 data class CGRect(var x: Float, var y: Float, var width: Float, var height: Float) {
     constructor(origin: CGPoint, size: CGSize) : this(origin.x, origin.y, size.width, size.height)
 }
+
