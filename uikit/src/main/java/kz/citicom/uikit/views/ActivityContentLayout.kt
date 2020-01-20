@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
@@ -26,6 +27,7 @@ class ActivityContentLayout(context: Context) : FrameLayout(context) {
             fitsSystemWindows = true
             setOnApplyWindowInsetsListener { v, insets ->
                 UIScreen.statusBarHeight = insets.systemWindowInsetTop
+                Log.e("SET_ST", UIScreen.statusBarHeight.toString())
                 this.lastInsets = insets
                 (v as? ActivityContentLayout)?.setWillNotDraw(
                     insets.systemWindowInsetTop <= 0 && background == null

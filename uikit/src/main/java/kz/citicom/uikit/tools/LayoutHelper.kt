@@ -19,7 +19,7 @@ object LayoutHelper {
         rightMargin: Float,
         bottomMargin: Float
     ): FrameLayout.LayoutParams {
-        val layoutParams = FrameLayout.LayoutParams(getSize(width), getSize(height), gravity)
+        val layoutParams = createFrame(width, height, gravity)
         layoutParams.setMargins(
             UIScreen.dp(leftMargin),
             UIScreen.dp(topMargin),

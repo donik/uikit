@@ -37,6 +37,6 @@ open abstract class UIActivity : Activity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
+        this.uiWindow?.onBackPressed()
     }
 }

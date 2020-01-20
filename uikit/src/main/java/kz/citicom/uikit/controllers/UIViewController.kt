@@ -10,6 +10,7 @@ import kz.citicom.uikit.tools.zero
 import kz.citicom.uikit.views.UIView
 import kz.citicom.uikit.views.removeChilds
 import kz.citicom.uikit.views.removeFromSuperview
+import java.lang.ref.WeakReference
 
 abstract class UIViewController(context: UIActivity) {
     private var _view: UIView? = null
@@ -24,6 +25,8 @@ abstract class UIViewController(context: UIActivity) {
             field = value
             this.insetsUpdated()
         }
+    private var _weakContext: WeakReference<UIActivity> = WeakReference(context)
+    val weakContext: UIActivity? = _weakContext.get()
 
     fun getWrap(): UIView {
         if (this._view != null) {

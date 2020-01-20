@@ -3,12 +3,22 @@ package kz.citicom.sampleuikit
 import android.content.Context
 import android.graphics.Color
 import android.util.Log
+import android.view.Gravity
 import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.controllers.UIViewController
+import kz.citicom.uikit.tools.LayoutHelper
+import kz.citicom.uikit.views.navigationBar.UINavigationBar
 
 class TestVC(context: UIActivity) : UIViewController(context) {
     override fun loadView() {
-        this.view.setBackgroundColor(Color.GRAY)
+        val context = weakContext ?: return
+//        this.view.setBackgroundColor(Color.GRAY)
+
+        val navigationBar = UINavigationBar(context)
+        this.view.addView(
+            navigationBar,
+            LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 44, Gravity.START)
+        )
     }
 
     override fun viewDidLoad() {

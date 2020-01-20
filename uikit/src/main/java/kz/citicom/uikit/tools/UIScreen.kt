@@ -2,11 +2,8 @@ package kz.citicom.uikit.tools
 
 import android.content.Context
 import android.graphics.Point
-import android.os.Build
 import android.util.DisplayMetrics
 import android.view.WindowManager
-import kotlin.math.max
-import kotlin.math.min
 
 object UIScreen {
     private var appContext: Context? = null
@@ -26,6 +23,11 @@ object UIScreen {
         val manager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
         manager?.defaultDisplay?.getMetrics(displayMetrics)
         manager?.defaultDisplay?.getSize(displaySize)
+
+        val resourceId: Int = appContext?.resources?.getIdentifier("status_bar_height", "dimen", "android") ?: 0
+        if (resourceId > 0) {
+            statusBarHeight =  appContext?.resources?.getDimensionPixelSize(resourceId) ?: 0
+        }
     }
 
     fun revertDp(size: Float): Int {

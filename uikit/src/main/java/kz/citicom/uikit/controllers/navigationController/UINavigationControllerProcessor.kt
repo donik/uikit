@@ -3,11 +3,15 @@ package kz.citicom.uikit.controllers.navigationController
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.util.Log
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.controllers.UIViewControllerPresentationType
+import kz.citicom.uikit.tools.weak
 import java.lang.Exception
 
-class UINavigationControllerProcessor : Handler() {
+class UINavigationControllerProcessor(
+    private val transitionCoordinator: UINavigationControllerTransitionCoordinator
+) : Handler() {
     companion object {
         private var flag = 0
         private val PUSH_CONTROLLER = flag++
@@ -26,6 +30,10 @@ class UINavigationControllerProcessor : Handler() {
         viewController: UIViewController,
         animated: Boolean
     ) {
+        if (transitionCoordinator.isAnimated) {
+            return
+        }
+
         if (!checkUiThread()) {
             sendMessage(
                 Message.obtain(
@@ -42,8 +50,15 @@ class UINavigationControllerProcessor : Handler() {
         if (viewController is UINavigationController) {
             throw Exception("UINavigationController not allowed")
         }
-        this.stack.push(viewController)
-        // todo
+
+        val weakController by weak(viewController)
+        this.stack.push(weakController ?: return)
+
+        val previousController = this.stack.previous
+        Log.e("TRY", "STACK SIZE: ${this.stack.size}")
+        val nextController = this.stack.last ?: return
+
+        transitionCoordinator.navigateForward(previousController, nextController, animated)
     }
 
     fun pop(animated: Boolean) {
@@ -60,15 +75,10 @@ class UINavigationControllerProcessor : Handler() {
             return
         }
 
-        val viewController = this.stack.removeLast()
-        val previousController = this.stack.previous
+        val fromController = this.stack.removeLast() ?: return
+        val toController = this.stack.last ?: return
 
-        val forward = false
-        val presentationType = UIViewControllerPresentationType.POP
-
-        if (animated) {
-        } else {
-        }
+        transitionCoordinator.navigateBackward(fromController, toController, animated)
     }
 
     override fun handleMessage(msg: Message) {

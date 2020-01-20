@@ -1,5 +1,6 @@
 package kz.citicom.uikit.controllers.navigationController
 
+import android.util.Log
 import kz.citicom.uikit.controllers.UIViewController
 
 class UINavigationControllerStack {
@@ -24,13 +25,6 @@ class UINavigationControllerStack {
             this.stack.last()
         } catch (_: Exception) {
             null
-        }
-    val current: UIViewController?
-        get() {
-            if (this.currentIndex == -1 || this.currentIndex >= this.stack.size) {
-                return null
-            }
-            return this.stack[this.currentIndex]
         }
 
     fun get(index: Int): UIViewController? {
@@ -60,7 +54,8 @@ class UINavigationControllerStack {
     }
 
     fun push(viewController: UIViewController) {
-        insert(viewController, this.currentIndex + 1)
+        this.stack.add(viewController)
+        this.currentIndex++
     }
 
     fun removeLast(): UIViewController? {
