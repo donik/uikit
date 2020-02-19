@@ -101,6 +101,6 @@ class UIWindow(
     }
 
     fun onBackPressed() {
-
+        this.rootViewController?.onBackPressed()
     }
 }

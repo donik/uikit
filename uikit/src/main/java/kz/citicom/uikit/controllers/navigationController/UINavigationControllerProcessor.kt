@@ -21,6 +21,8 @@ class UINavigationControllerProcessor(
     }
 
     private val stack: UINavigationControllerStack = UINavigationControllerStack()
+    val stackSize: Int
+        get() = stack.size
 
     private fun checkUiThread(): Boolean {
         return Looper.myLooper() == Looper.getMainLooper()
@@ -56,12 +58,21 @@ class UINavigationControllerProcessor(
 
         val previousController = this.stack.previous
         Log.e("TRY", "STACK SIZE: ${this.stack.size}")
+
+//        if (this.stack.size > 10) {
+//            this.stack.remove(5)
+//        }
+
         val nextController = this.stack.last ?: return
 
         transitionCoordinator.navigateForward(previousController, nextController, animated)
     }
 
     fun pop(animated: Boolean) {
+        if (transitionCoordinator.isAnimated) {
+            return
+        }
+
         if (!checkUiThread()) {
             sendMessage(
                 Message.obtain(
@@ -75,8 +86,10 @@ class UINavigationControllerProcessor(
             return
         }
 
+        val toController = this.stack.previous ?: return
         val fromController = this.stack.removeLast() ?: return
-        val toController = this.stack.last ?: return
+
+        Log.e("TRY", "STACK SIZE: ${this.stack.size}")
 
         transitionCoordinator.navigateBackward(fromController, toController, animated)
     }

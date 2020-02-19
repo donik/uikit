@@ -9,8 +9,8 @@ import kz.citicom.uikit.tools.weak
 import kz.citicom.uikit.views.UIView
 
 open class UINavigationController(context: UIActivity) : UIViewController(context) {
-    private var foregroundContentView: UIView = UIView(context)
-    private var backgroundContentView: UIView = UIView(context)
+    private var foregroundContentView: UIView = UIView(context, "foregroundContentView")
+    private var backgroundContentView: UIView = UIView(context, "backgroundContentView")
     private val processor: UINavigationControllerProcessor = UINavigationControllerProcessor(
         UINavigationControllerTransitionCoordinator(
             foregroundContentView,
@@ -39,8 +39,7 @@ open class UINavigationController(context: UIActivity) : UIViewController(contex
     }
 
     fun popViewController(animated: Boolean) {
-        //todo check pop allow !!!
-//        this.processor.pop(animated)
+        this.processor.pop(animated)
     }
 
     fun popToRoot(viewController: UIViewController, animated: Boolean = true) {
@@ -48,7 +47,11 @@ open class UINavigationController(context: UIActivity) : UIViewController(contex
     }
 
     override fun onBackPressed(): Boolean {
+        if (this.processor.stackSize > 1) {
+            this.processor.pop(true)
+            return true
+        }
+
         return super.onBackPressed()
     }
-
 }

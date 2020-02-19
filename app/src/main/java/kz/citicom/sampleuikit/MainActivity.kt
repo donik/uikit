@@ -1,6 +1,5 @@
 package kz.citicom.sampleuikit
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import kz.citicom.uikit.UIActivity
@@ -24,13 +23,9 @@ class MainActivity : UIActivity() {
         var index = 0
         vc.getWrap().setOnClickListener {
             index++
-            Log.e("CLICK", "CLICK ACTION")
-            val root = TestVC(this)
-            if (index % 2 == 0) {
-                root.getWrap().setBackgroundColor(Color.RED)
-            } else {
-                root.getWrap().setBackgroundColor(Color.GREEN)
-            }
+
+            val root = TestVC(this, index)
+
             vc.push(root, true)
         }
     }

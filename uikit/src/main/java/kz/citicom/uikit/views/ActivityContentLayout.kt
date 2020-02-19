@@ -2,6 +2,7 @@ package kz.citicom.uikit.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
 import android.util.Log
@@ -27,7 +28,6 @@ class ActivityContentLayout(context: Context) : FrameLayout(context) {
             fitsSystemWindows = true
             setOnApplyWindowInsetsListener { v, insets ->
                 UIScreen.statusBarHeight = insets.systemWindowInsetTop
-                Log.e("SET_ST", UIScreen.statusBarHeight.toString())
                 this.lastInsets = insets
                 (v as? ActivityContentLayout)?.setWillNotDraw(
                     insets.systemWindowInsetTop <= 0 && background == null
@@ -63,7 +63,7 @@ class ActivityContentLayout(context: Context) : FrameLayout(context) {
             }
 
             if (hasCutout) {
-                backgroundPaint.color = -0x1000000
+                backgroundPaint.color = Color.GREEN//-0x1000000
                 val left = insets.systemWindowInsetLeft
                 if (left != 0) {
                     canvas?.drawRect(
