@@ -7,17 +7,18 @@ import android.view.Gravity
 import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.tools.LayoutHelper
+import kz.citicom.uikit.tools.weak
+import kz.citicom.uikit.views.UIView
 import kz.citicom.uikit.views.navigationBar.UINavigationBar
+import java.util.*
+import kotlin.concurrent.schedule
 
 class TestVC(context: UIActivity, private val index: Int = 0) : UIViewController(context) {
-    override fun loadView() {
-        val context = weakContext ?: return
+    override fun loadView(): UIView? {
+        val contentView = UIView(weakContext ?: return null)
+        contentView.setBackgroundResource(R.drawable.first)
 
-//        if (index % 2 == 0) {
-            this.view.setBackgroundResource(R.drawable.first)
-//        } else {
-//            this.view.setBackgroundResource(R.drawable.second)
-//        }
+        return contentView
     }
 
     override fun viewDidLoad() {
@@ -48,5 +49,9 @@ class TestVC(context: UIActivity, private val index: Int = 0) : UIViewController
         super.viewDidDisappear()
 
         Log.e("TestVC", "viewDidDisappear")
+    }
+
+    protected fun finalize() {
+        Log.e("FIN", "FINALIZE")
     }
 }

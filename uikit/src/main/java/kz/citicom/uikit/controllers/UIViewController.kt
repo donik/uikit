@@ -1,30 +1,19 @@
 package kz.citicom.uikit.controllers
 
 import android.content.pm.ActivityInfo
-import android.util.Log
 import androidx.annotation.CallSuper
 import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.tools.UIEdgeInsets
 import kz.citicom.uikit.tools.UIScreen
 import kz.citicom.uikit.tools.zero
+import kz.citicom.uikit.utils.Wrapper
 import kz.citicom.uikit.views.UIView
-import kz.citicom.uikit.views.removeChilds
 import kz.citicom.uikit.views.removeFromSuperview
-import java.lang.Exception
 import java.lang.ref.WeakReference
 
-abstract class UIViewController(context: UIActivity) {
-    private var _view: UIView? = null
-    protected val view: UIView
-        get() {
-            val v = this._view
-            if (v == null) {
-                assert(true) {
-                    return@assert "Error View is null"
-                }
-            }
-            return v!!
-        }
+abstract class UIViewController(context: UIActivity) : Wrapper<UIView>() {
+    protected var view: UIView? = null
+        private set
 
     var isViewLoaded: Boolean = false
         private set
@@ -43,21 +32,15 @@ abstract class UIViewController(context: UIActivity) {
         SupportedOrientation.ALL -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
     }
 
-    fun getWrap(): UIView {
-        if (this._view != null) {
-            return this._view!!
+    override fun getWrap(): UIView? {
+        if (this.view == null) {
+            this.view = loadView()
+            this.viewDidLoad()
         }
-        if (this._view == null && weakContext != null) {
-            this._view = UIView(weakContext, this.javaClass.toString())
-            loadView()
-            viewDidLoad()
-        }
-        assert(this._view == null) { "View is null" }
-
         return this.view
     }
 
-    abstract fun loadView()
+    abstract fun loadView() : UIView?
 
     @CallSuper
     open fun viewDidLoad() {
@@ -84,12 +67,10 @@ abstract class UIViewController(context: UIActivity) {
     @CallSuper
     internal fun destroy() {
         this.isDestroyed = true
-        this.view.removeFromSuperview()
-        this._view = null
     }
 
     private fun insetsUpdated() {
-        this.view.setPadding(
+        this.view?.setPadding(
             UIScreen.dp(controllerInsets.left),
             UIScreen.dp(controllerInsets.top),
             UIScreen.dp(controllerInsets.right),
@@ -99,11 +80,7 @@ abstract class UIViewController(context: UIActivity) {
 
     // return true is need close
     open fun onBackPressed(): Boolean {
-        return false
-    }
-
-    protected fun finalize() {
-        Log.e("FIN", "FINALIZE")
+        return true
     }
 
     enum class SupportedOrientation {

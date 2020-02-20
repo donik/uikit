@@ -1,12 +1,12 @@
 package kz.citicom.uikit.controllers.navigationController
 
-import android.util.Log
 import android.view.View
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.tools.LayoutHelper
 import kz.citicom.uikit.tools.UIAnimation
 import kz.citicom.uikit.tools.weak
 import kz.citicom.uikit.views.UIView
+import kz.citicom.uikit.views.removeChildes
 import kz.citicom.uikit.views.removeFromSuperview
 
 class UINavigationControllerTransitionCoordinator(
@@ -38,17 +38,19 @@ class UINavigationControllerTransitionCoordinator(
         if (isAnimated) {
             this.isAnimated = true
             val weakSelf by weak(this)
-            UIView.animate(400, UIAnimation.ACCELERATE_DECELERATE_INTERPOLATOR, {
+            UIView.animate(120, 400, UIAnimation.ACCELERATE_DECELERATE_INTERPOLATOR, {
                 weakSelf?.factorForwardBackwardAnimation(true, it)
             }, {
-                weakSelf?.finishForwardBackwardAnimation(view)
+                weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
                 from?.viewDidDisappear()
                 to.viewDidAppear()
+                from?.getWrap()?.removeFromSuperview()
             })
         } else {
-            finishForwardBackwardAnimation(view)
+            finishForwardBackwardAnimation(view ?: return)
             from?.viewDidDisappear()
             to.viewDidAppear()
+            from?.getWrap()?.removeFromSuperview()
         }
     }
 
@@ -70,17 +72,19 @@ class UINavigationControllerTransitionCoordinator(
             this.isAnimated = true
             val weakSelf by weak(this)
 
-            UIView.animate(300, UIAnimation.ACCELERATE_DECELERATE_INTERPOLATOR, {
+            UIView.animate(120, 300, UIAnimation.ACCELERATE_DECELERATE_INTERPOLATOR, {
                 weakSelf?.factorForwardBackwardAnimation(false, it)
             }, {
-                weakSelf?.finishForwardBackwardAnimation(view)
+                weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
                 from.viewDidDisappear()
                 to.viewDidAppear()
+                from.getWrap()?.removeFromSuperview()
             })
         } else {
-            finishForwardBackwardAnimation(view)
+            finishForwardBackwardAnimation(view ?: return)
             from.viewDidDisappear()
             to.viewDidAppear()
+            from.getWrap()?.removeFromSuperview()
         }
     }
 
@@ -126,6 +130,8 @@ class UINavigationControllerTransitionCoordinator(
                 LayoutHelper.MATCH_PARENT
             )
         )
+        this.backgroundContentView.removeChildes()
+
         this.foregroundContentView.translationX = 0.0f
         this.backgroundContentView.translationX = 0.0f
         this.foregroundContentView.bringToFront()

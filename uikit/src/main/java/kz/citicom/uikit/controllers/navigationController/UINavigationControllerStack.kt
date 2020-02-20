@@ -2,10 +2,11 @@ package kz.citicom.uikit.controllers.navigationController
 
 import android.util.Log
 import kz.citicom.uikit.controllers.UIViewController
+import kz.citicom.uikit.tools.weak
 
 class UINavigationControllerStack {
     private var currentIndex: Int = -1
-    private var stack: ArrayList<UIViewController> = arrayListOf()
+    private var stack: ArrayList<UIViewController?> = arrayListOf()
     private val lock: Any = Any()
 
     val isEmpty: Boolean
@@ -36,8 +37,13 @@ class UINavigationControllerStack {
 
     fun set(viewControllers: ArrayList<UIViewController>) {
         synchronized(lock) {
+            val controllers = viewControllers.map {
+                val controller by weak(it)
+                return@map controller
+            }
+
             this.stack.clear()
-            this.stack.addAll(viewControllers)
+            this.stack.addAll(controllers)
             this.currentIndex = this.size - 1
         }
     }
@@ -48,20 +54,22 @@ class UINavigationControllerStack {
         }
 
         synchronized(lock) {
-            this.stack.add(index, viewController)
+            val controller by weak(viewController)
+            this.stack.add(index, controller)
             this.currentIndex++
         }
     }
 
     fun push(viewController: UIViewController) {
-        this.stack.add(viewController)
+        val controller by weak(viewController)
+        this.stack.add(controller)
         this.currentIndex++
     }
 
     fun remove(index: Int): UIViewController? {
         synchronized(lock) {
             val controller = this.stack.removeAt(index)
-            controller.destroy()
+            controller?.destroy()
             this.currentIndex--
 
             return controller
@@ -71,7 +79,7 @@ class UINavigationControllerStack {
     fun removeLast(): UIViewController? {
         synchronized(lock) {
             val controller = this.stack.removeAt(this.currentIndex - 1)
-            controller.destroy()
+            controller?.destroy()
             this.currentIndex--
 
             return controller

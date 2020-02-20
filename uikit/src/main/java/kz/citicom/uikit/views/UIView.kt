@@ -5,22 +5,23 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import kz.citicom.uikit.tools.UIAnimation
 
-open class UIView(context: Context, private var name: String = this.javaClass.toString()) : FrameLayout(context) {
+open class UIView(context: Context) : FrameLayout(context) {
     companion object {
         fun animate(
+            delay: Long,
             duration: Long,
             interpolator: TimeInterpolator = UIAnimation.ACCELERATE_DECELERATE_INTERPOLATOR,
             progress: ((Float) -> Unit)? = null,
             completion: (() -> Unit)? = null
         ) {
             val animator = simpleValueAnimator()
+            animator.startDelay = delay
             animator.duration = duration
             animator.interpolator = interpolator
             animator.addUpdateListener { currentAnimator ->
@@ -79,11 +80,9 @@ open class UIView(context: Context, private var name: String = this.javaClass.to
                 this.layoutRequested = true
             }
             this.layoutLimit == -1 -> {
-                Log.e("REQ", "REQUEST LAYOUT " + toString())
                 super.requestLayout()
             }
             this.layoutComplete < this.layoutLimit -> {
-                Log.e("REQ", "REQUEST LAYOUT " + toString())
                 this.layoutComplete++
                 super.requestLayout()
             }
@@ -100,13 +99,16 @@ open class UIView(context: Context, private var name: String = this.javaClass.to
         this.layoutComplete = 0
     }
 
-    override fun toString(): String {
-        return name
+    override fun hasOverlappingRendering(): Boolean {
+        return false
     }
 }
 
-fun View.removeChilds() {
-    (this as? ViewGroup)?.removeAllViews()
+fun View.removeChildes() {
+    val viewGroup = this as? ViewGroup ?: return
+    for (i in 0 until viewGroup.childCount) {
+        viewGroup.removeViewAt(i)
+    }
 }
 
 fun View.removeFromSuperview(): View? {

@@ -14,14 +14,12 @@ class MainActivity : UIActivity() {
 
         val vc = UINavigationController(this)
 
-        Log.e("WIND", savedInstanceState.toString())
-
         this.uiWindow = UIWindow(this)
         this.uiWindow?.rootViewController = vc
         this.uiWindow?.makeKeyAndVisible()
 
         var index = 0
-        vc.getWrap().setOnClickListener {
+        vc.getWrap()?.setOnClickListener {
             index++
 
             val root = TestVC(this, index)

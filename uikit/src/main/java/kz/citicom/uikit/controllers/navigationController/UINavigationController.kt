@@ -9,8 +9,8 @@ import kz.citicom.uikit.tools.weak
 import kz.citicom.uikit.views.UIView
 
 open class UINavigationController(context: UIActivity) : UIViewController(context) {
-    private var foregroundContentView: UIView = UIView(context, "foregroundContentView")
-    private var backgroundContentView: UIView = UIView(context, "backgroundContentView")
+    private var foregroundContentView: UIView = UIView(context)
+    private var backgroundContentView: UIView = UIView(context)
     private val processor: UINavigationControllerProcessor = UINavigationControllerProcessor(
         UINavigationControllerTransitionCoordinator(
             foregroundContentView,
@@ -18,16 +18,20 @@ open class UINavigationController(context: UIActivity) : UIViewController(contex
         )
     )
 
-    override fun loadView() {
-        this.view.addView(
+    override fun loadView(): UIView? {
+        val contentView = UIView(this.weakContext ?: return null)
+
+        contentView.addView(
             this.backgroundContentView,
             LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT)
         )
 
-        this.view.addView(
+        contentView.addView(
             this.foregroundContentView,
             LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT)
         )
+
+        return contentView
     }
 
     fun setViewControllers(viewControllers: UIViewController, animated: Boolean = true) {
@@ -48,8 +52,8 @@ open class UINavigationController(context: UIActivity) : UIViewController(contex
 
     override fun onBackPressed(): Boolean {
         if (this.processor.stackSize > 1) {
-            this.processor.pop(true)
-            return true
+            this.popViewController(true)
+            return false
         }
 
         return super.onBackPressed()
