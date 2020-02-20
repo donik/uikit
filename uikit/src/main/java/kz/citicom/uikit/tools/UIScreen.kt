@@ -47,14 +47,22 @@ object UIScreen {
     }
 
     fun dp(size: Float, maxDensity: Float): Int {
-        return (Math.min(density, maxDensity) * size + 0.5f).toInt()
+        return (density.coerceAtMost(maxDensity) * size + 0.5f).toInt()
     }
 
     fun dpf(size: Float, maxDensity: Float): Int {
-        return (Math.min(density, maxDensity) * size + 0.5f).toInt()
+        return (density.coerceAtMost(maxDensity) * size + 0.5f).toInt()
     }
 
     fun px(size: Float): Int {
         return (size / density - 0.5f).toInt()
+    }
+
+    fun currentWidth(): Int {
+        return displayMetrics.widthPixels
+    }
+
+    fun currentHeight(): Int {
+        return displayMetrics.widthPixels
     }
 }

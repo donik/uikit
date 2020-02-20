@@ -16,7 +16,12 @@ import kotlin.concurrent.schedule
 class TestVC(context: UIActivity, private val index: Int = 0) : UIViewController(context) {
     override fun loadView(): UIView? {
         val contentView = UIView(weakContext ?: return null)
-        contentView.setBackgroundResource(R.drawable.first)
+
+        if (index % 2 == 0) {
+            contentView.setBackgroundResource(R.drawable.first)
+        } else {
+            contentView.setBackgroundResource(R.drawable.second)
+        }
 
         return contentView
     }
@@ -24,34 +29,31 @@ class TestVC(context: UIActivity, private val index: Int = 0) : UIViewController
     override fun viewDidLoad() {
         super.viewDidLoad()
 
-        Log.e("TestVC", "viewDidLoad")
+//        Log.e("TestVC", "viewDidLoad")
     }
 
     override fun viewWillAppear() {
         super.viewWillAppear()
 
-        Log.e("TestVC", "viewWillAppear")
+//        Log.e("TestVC", "viewWillAppear")
     }
 
     override fun viewDidAppear() {
         super.viewDidAppear()
 
-        Log.e("TestVC", "viewDidAppear")
+//        Log.e("TestVC", "viewDidAppear")
     }
 
     override fun viewWillDisappear() {
         super.viewWillDisappear()
 
-        Log.e("TestVC", "viewWillDisappear")
+//        Log.e("TestVC", "viewWillDisappear")
     }
 
     override fun viewDidDisappear() {
         super.viewDidDisappear()
 
-        Log.e("TestVC", "viewDidDisappear")
+//        Log.e("TestVC", "viewDidDisappear")
     }
 
-    protected fun finalize() {
-        Log.e("FIN", "FINALIZE")
-    }
 }

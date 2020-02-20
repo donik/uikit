@@ -2,6 +2,7 @@ package kz.citicom.uikit.views
 
 import android.content.Context
 import android.graphics.Color
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
@@ -16,7 +17,15 @@ class UIWindow(
     activity: UIActivity
 ) {
     private var key: String? = null
-    private var view: FrameLayout = FrameLayout(activity)
+    private var view: FrameLayout = object : FrameLayout(activity) {
+        override fun onTouchEvent(event: MotionEvent?): Boolean {
+            return rootViewController?.onTouchEvent(event) ?: false
+        }
+
+        override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+            return rootViewController?.onInterceptTouchEvent(ev) ?: false
+        }
+    }
 
     private var _weakActivity: WeakReference<UIActivity> = WeakReference(activity)
     private val weakActivity: UIActivity? = _weakActivity.get()
@@ -103,4 +112,5 @@ class UIWindow(
     fun onBackPressed() {
         this.rootViewController?.onBackPressed()
     }
+
 }

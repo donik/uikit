@@ -1,8 +1,10 @@
 package kz.citicom.uikit.controllers
 
 import android.content.pm.ActivityInfo
+import android.view.MotionEvent
 import androidx.annotation.CallSuper
 import kz.citicom.uikit.UIActivity
+import kz.citicom.uikit.controllers.navigationController.UINavigationController
 import kz.citicom.uikit.tools.UIEdgeInsets
 import kz.citicom.uikit.tools.UIScreen
 import kz.citicom.uikit.tools.zero
@@ -26,11 +28,23 @@ abstract class UIViewController(context: UIActivity) : Wrapper<UIView>() {
         }
     private var _weakContext: WeakReference<UIActivity> = WeakReference(context)
     val weakContext: UIActivity? = _weakContext.get()
+
+    private var _weakNavigationController: Wrapper<UIView>? = null
+    var navigationController: UINavigationController?
+        get() {
+            return _weakNavigationController as? UINavigationController
+        }
+        set(value) {
+            _weakNavigationController = value
+        }
+
     protected var supportedOrientation: SupportedOrientation = SupportedOrientation.ALL
     private val activityOrientation = when (supportedOrientation) {
         SupportedOrientation.PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         SupportedOrientation.ALL -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
     }
+    open var isSwipeNavigationEnabled: Boolean = true
+    open var isIntercepted: Boolean = false
 
     override fun getWrap(): UIView? {
         if (this.view == null) {
@@ -40,7 +54,7 @@ abstract class UIViewController(context: UIActivity) : Wrapper<UIView>() {
         return this.view
     }
 
-    abstract fun loadView() : UIView?
+    abstract fun loadView(): UIView?
 
     @CallSuper
     open fun viewDidLoad() {
@@ -67,6 +81,7 @@ abstract class UIViewController(context: UIActivity) : Wrapper<UIView>() {
     @CallSuper
     internal fun destroy() {
         this.isDestroyed = true
+        this.navigationController = null
     }
 
     private fun insetsUpdated() {
@@ -78,7 +93,18 @@ abstract class UIViewController(context: UIActivity) : Wrapper<UIView>() {
         )
     }
 
-    // return true is need close
+    open fun canSlideBackFrom(x: Float, y: Float): Boolean {
+        return true
+    }
+
+    open fun onInterceptTouchEvent(event: MotionEvent?): Boolean {
+        return false
+    }
+
+    open fun onTouchEvent(event: MotionEvent?): Boolean {
+        return false
+    }
+
     open fun onBackPressed(): Boolean {
         return true
     }

@@ -5,11 +5,11 @@ import android.os.Looper
 import android.os.Message
 import android.util.Log
 import kz.citicom.uikit.controllers.UIViewController
-import kz.citicom.uikit.controllers.UIViewControllerPresentationType
 import kz.citicom.uikit.tools.weak
 import java.lang.Exception
 
 class UINavigationControllerProcessor(
+    private val navigationController: UINavigationController?,
     private val transitionCoordinator: UINavigationControllerTransitionCoordinator
 ) : Handler() {
     companion object {
@@ -23,6 +23,10 @@ class UINavigationControllerProcessor(
     private val stack: UINavigationControllerStack = UINavigationControllerStack()
     val stackSize: Int
         get() = stack.size
+    val previous: UIViewController?
+        get() = this.stack.previous
+    val current: UIViewController?
+        get() = this.stack.last
 
     private fun checkUiThread(): Boolean {
         return Looper.myLooper() == Looper.getMainLooper()
@@ -32,7 +36,7 @@ class UINavigationControllerProcessor(
         viewController: UIViewController,
         animated: Boolean
     ) {
-        if (transitionCoordinator.isAnimated) {
+        if (transitionCoordinator.isAnimating) {
             return
         }
 
@@ -53,6 +57,7 @@ class UINavigationControllerProcessor(
             throw Exception("UINavigationController not allowed")
         }
 
+        viewController.navigationController = navigationController
         val weakController by weak(viewController)
         this.stack.push(weakController ?: return)
 
@@ -69,7 +74,7 @@ class UINavigationControllerProcessor(
     }
 
     fun pop(animated: Boolean) {
-        if (transitionCoordinator.isAnimated) {
+        if (transitionCoordinator.isAnimating) {
             return
         }
 
