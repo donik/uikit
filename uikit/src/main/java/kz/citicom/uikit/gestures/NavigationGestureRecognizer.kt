@@ -1,6 +1,7 @@
 package kz.citicom.uikit.gestures
 
 import android.content.Context
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import kz.citicom.uikit.controllers.UIViewController
@@ -56,6 +57,7 @@ public class NavigationGestureRecognizer(
     }
 
     private fun onUp(): Boolean {
+        this.transitionCoordinator.backwardTranslationDone()
         if (this.abortUp) {
             clear()
             this.abortUp = false
@@ -63,13 +65,19 @@ public class NavigationGestureRecognizer(
             if (this.slidingBack) {
                 val isClose = this.lastScrollX.toFloat() < UIScreen.currentWidth() * 0.67f
                 if (isClose) {
-//                    this.delegate.closePreview(0.0f)
+                    this.transitionCoordinator.cancelBackward(
+                        this.navigationController?.lastVisibleController,
+                        this.navigationController?.previousController,
+                        0.0f
+                    )
                 } else {
                     this.transitionCoordinator.applyBackward(
                         this.navigationController?.lastVisibleController,
                         this.navigationController?.previousController,
                         0.0f
-                    )
+                    ) {
+                        this.navigationController?.popInternal()
+                    }
                 }
             }
             clear()
@@ -140,7 +148,7 @@ public class NavigationGestureRecognizer(
             return false
         }
         val viewController = this.navigationController?.lastVisibleController
-        if (viewController == null || viewController.isIntercepted) {
+        if (viewController == null || viewController.isIntercepted()) {
             return false
         }
         this.listenSlidingBack = canSlideBack(viewController, this.startX, this.startY)
@@ -164,9 +172,15 @@ public class NavigationGestureRecognizer(
                         this.navigationController?.lastVisibleController,
                         this.navigationController?.previousController,
                         abs
-                    )
+                    ) {
+                        this.navigationController?.popInternal()
+                    }
                 } else {
-//                    this.delegate.closePreview(abs)
+                    this.transitionCoordinator.cancelBackward(
+                        this.navigationController?.lastVisibleController,
+                        this.navigationController?.previousController,
+                        abs
+                    )
                 }
             }
 

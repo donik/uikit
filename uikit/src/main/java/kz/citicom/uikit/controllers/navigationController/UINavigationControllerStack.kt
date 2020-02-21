@@ -78,7 +78,7 @@ class UINavigationControllerStack {
 
     fun removeLast(): UIViewController? {
         synchronized(lock) {
-            val controller = this.stack.removeAt(this.currentIndex - 1)
+            val controller = this.stack.removeAt(this.currentIndex)
             controller?.destroy()
             this.currentIndex--
 

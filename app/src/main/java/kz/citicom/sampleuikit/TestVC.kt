@@ -1,29 +1,51 @@
 package kz.citicom.sampleuikit
 
-import android.content.Context
-import android.graphics.Color
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
+import android.widget.TextView
 import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.tools.LayoutHelper
-import kz.citicom.uikit.tools.weak
+import kz.citicom.uikit.tools.UIFonts
 import kz.citicom.uikit.views.UIView
 import kz.citicom.uikit.views.navigationBar.UINavigationBar
-import java.util.*
-import kotlin.concurrent.schedule
 
-class TestVC(context: UIActivity, private val index: Int = 0) : UIViewController(context) {
+class TestVC(context: UIActivity, open val index: Int = 0) : UIViewController(context) {
     override fun loadView(): UIView? {
         val contentView = UIView(weakContext ?: return null)
 
+        val navigationBar = UINavigationBar(weakContext)
+        contentView.addView(
+            navigationBar,
+            LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT)
+        )
+
+        contentView.setBackgroundResource(R.color.divider)
         if (index % 2 == 0) {
             contentView.setBackgroundResource(R.drawable.first)
         } else {
             contentView.setBackgroundResource(R.drawable.second)
         }
 
+        val textView = TextView(weakContext)
+        textView.text = "INDEX OF PAGE CENTERED: $index"
+        textView.typeface = UIFonts.robotoBold
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18.0f)
+        contentView.addView(
+            textView,
+            LayoutHelper.createFrame(
+                LayoutHelper.WRAP_CONTENT,
+                LayoutHelper.WRAP_CONTENT,
+                Gravity.CENTER
+            )
+        )
+
         return contentView
+    }
+
+    override fun toString(): String {
+        return "Controller destroyed index: $index"
     }
 
     override fun viewDidLoad() {

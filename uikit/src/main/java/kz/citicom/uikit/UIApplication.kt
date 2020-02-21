@@ -16,6 +16,18 @@ abstract class UIApplication : Application() {
         var applicationContext: Context? = null
             private set
         var applicationHandler: Handler? = null
+
+        fun post(r: Runnable, delay: Long? = null) {
+            if (delay == null) {
+                applicationHandler?.post(r)
+            } else {
+                applicationHandler?.postDelayed(r, delay)
+            }
+        }
+
+        fun cancel(r: Runnable) {
+            applicationHandler?.removeCallbacks(r)
+        }
     }
 
     abstract fun filesDirectory(): File

@@ -16,6 +16,7 @@ class UINavigationControllerProcessor(
         private var flag = 0
         private val PUSH_CONTROLLER = flag++
         private val POP_CONTROLLER = flag++
+        private val POP_INTERNAL_CONTROLLER = flag++
         private val PRESENT_CONTROLLER = flag++
         private val DISMISS_CONTROLLER = flag++
     }
@@ -62,7 +63,6 @@ class UINavigationControllerProcessor(
         this.stack.push(weakController ?: return)
 
         val previousController = this.stack.previous
-        Log.e("TRY", "STACK SIZE: ${this.stack.size}")
 
 //        if (this.stack.size > 10) {
 //            this.stack.remove(5)
@@ -94,9 +94,24 @@ class UINavigationControllerProcessor(
         val toController = this.stack.previous ?: return
         val fromController = this.stack.removeLast() ?: return
 
-        Log.e("TRY", "STACK SIZE: ${this.stack.size}")
-
         transitionCoordinator.navigateBackward(fromController, toController, animated)
+    }
+
+    fun popInternal() {
+        if (!checkUiThread()) {
+            sendMessage(
+                Message.obtain(
+                    this,
+                    POP_INTERNAL_CONTROLLER,
+                    0,
+                    0,
+                    null
+                )
+            )
+            return
+        }
+
+        this.stack.removeLast() ?: return
     }
 
     override fun handleMessage(msg: Message) {
@@ -109,6 +124,9 @@ class UINavigationControllerProcessor(
             POP_CONTROLLER -> {
                 val isAnimated = msg.arg1 == 1
                 this.pop(isAnimated)
+            }
+            POP_INTERNAL_CONTROLLER -> {
+                this.popInternal()
             }
         }
     }

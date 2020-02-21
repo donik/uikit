@@ -64,7 +64,7 @@ open class UINavigationController(context: UIActivity) : UIViewController(contex
         return contentView
     }
 
-    fun setViewControllers(viewControllers: UIViewController, animated: Boolean = true) {
+    fun setViewControllers(viewControllers: Array<UIViewController>, animated: Boolean = true) {
 
     }
 
@@ -74,6 +74,10 @@ open class UINavigationController(context: UIActivity) : UIViewController(contex
 
     fun popViewController(animated: Boolean) {
         this.processor.pop(animated)
+    }
+
+    internal fun popInternal() {
+        this.processor.popInternal()
     }
 
     fun popToRoot(viewController: UIViewController, animated: Boolean = true) {

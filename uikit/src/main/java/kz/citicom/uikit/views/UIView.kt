@@ -4,7 +4,9 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +43,15 @@ open class UIView(context: Context) : FrameLayout(context) {
 
         private fun getFraction(animator: ValueAnimator): Float {
             return animator.animatedFraction
+        }
+
+        fun setClickable(view: View) {
+            view.isClickable = true
+            view.isFocusableInTouchMode = false
+            view.isFocusable = false
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && view is ViewGroup) {
+                view.isMotionEventSplittingEnabled = false
+            }
         }
     }
 

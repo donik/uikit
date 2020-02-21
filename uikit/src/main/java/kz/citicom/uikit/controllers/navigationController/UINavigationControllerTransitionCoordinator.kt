@@ -1,6 +1,7 @@
 package kz.citicom.uikit.controllers.navigationController
 
 import android.view.View
+import kz.citicom.uikit.UIApplication
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.tools.LayoutHelper
 import kz.citicom.uikit.tools.UIAnimation
@@ -8,7 +9,6 @@ import kz.citicom.uikit.tools.weak
 import kz.citicom.uikit.views.UIView
 import kz.citicom.uikit.views.removeChildes
 import kz.citicom.uikit.views.removeFromSuperview
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 class UINavigationControllerTransitionCoordinator(
@@ -18,15 +18,24 @@ class UINavigationControllerTransitionCoordinator(
     companion object {
         private const val TRANSLATION_FACTOR = 0.14f
 
-        private fun calculateDropDuration(length: Float, velocity: Float, max: Int, min: Int): Int {
-            return if (velocity <= 0.0f) max else (length / (velocity / 1000.0f)).roundToInt().coerceAtLeast(
-                min
-            ).coerceAtMost(max)
+        private fun calculateDropDuration(
+            length: Float,
+            velocity: Float,
+            maximum: Int,
+            minimum: Int
+        ): Int {
+            return if (velocity <= 0.0f) maximum else (length / (velocity / 1000.0f)).roundToInt().coerceAtLeast(
+                minimum
+            ).coerceAtMost(maximum)
         }
     }
 
     var isAnimating: Boolean = false
         private set
+    private var runnable = Runnable {
+        this.isAnimating = false
+        this.layoutIfRequested()
+    }
 
     fun navigateForward(from: UIViewController?, to: UIViewController, animated: Boolean) {
         val isAnimated = from != null && animated
@@ -46,7 +55,7 @@ class UINavigationControllerTransitionCoordinator(
         if (isAnimated) {
             this.isAnimating = true
             val weakSelf by weak(this)
-            UIView.animate(120, 400, UIAnimation.ACCELERATE_DECELERATE_INTERPOLATOR, {
+            UIView.animate(120, 300, UIAnimation.ACCELERATE_DECELERATE_INTERPOLATOR, {
                 weakSelf?.factorForwardBackwardAnimation(true, it)
             }, {
                 weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
@@ -80,7 +89,7 @@ class UINavigationControllerTransitionCoordinator(
             this.isAnimating = true
             val weakSelf by weak(this)
 
-            UIView.animate(120, 300, UIAnimation.ACCELERATE_DECELERATE_INTERPOLATOR, {
+            UIView.animate(120, 300, UIAnimation.DECELERATE_INTERPOLATOR, {
                 weakSelf?.factorForwardBackwardAnimation(false, it)
             }, {
                 weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
@@ -132,29 +141,17 @@ class UINavigationControllerTransitionCoordinator(
             return
         }
 
-        val view = to?.getWrap()
-        if (this.backgroundContentView.translationX == 0.0f) {
-            return
-        }
-    }
-
-    fun applyBackward(from: UIViewController?, to: UIViewController?, velocity: Float) {
-        if (!this.isAnimating) {
-            return
-        }
-
-        val view = to?.getWrap()
+        val view = from?.getWrap()
         if (this.backgroundContentView.translationX == 0.0f) {
             finishForwardBackwardAnimation(view ?: return)
-            from?.viewDidDisappear()
-            to.viewDidAppear()
-            from?.getWrap()?.removeFromSuperview()
+            from.viewDidAppear()
+            to?.viewDidDisappear()
+            to?.getWrap()?.removeFromSuperview()
             return
         }
 
-        val factor =
+        val startFactor =
             this.foregroundContentView.translationX / this.foregroundContentView.measuredWidth
-        val diffFactor = 1.0f - factor
         val weakSelf by weak(this)
         UIView.animate(
             0L,
@@ -166,18 +163,65 @@ class UINavigationControllerTransitionCoordinator(
             ).toLong(),
             UIAnimation.DECELERATE_INTERPOLATOR,
             {
-                weakSelf?.factorForwardBackwardAnimation(false, it)
+                val factor = startFactor - (startFactor * it)
+                weakSelf?.factorForwardBackwardAnimation(false, factor)
+            }, {
+                weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
+                from?.viewDidAppear()
+                to?.viewDidDisappear()
+                to?.getWrap()?.removeFromSuperview()
+            }
+        )
+    }
+
+    fun applyBackward(from: UIViewController?, to: UIViewController?, velocity: Float, completion: () -> Unit) {
+        if (!this.isAnimating) {
+            return
+        }
+
+        val view = to?.getWrap()
+        if (this.backgroundContentView.translationX == 0.0f) {
+            finishForwardBackwardAnimation(view ?: return)
+            from?.viewDidDisappear()
+            to.viewDidAppear()
+            from?.getWrap()?.removeFromSuperview()
+            completion()
+            return
+        }
+
+        val startFactor =
+            this.foregroundContentView.translationX / this.foregroundContentView.measuredWidth
+        val diffFactor = 1.0f - startFactor
+        val weakSelf by weak(this)
+        UIView.animate(
+            0L,
+            calculateDropDuration(
+                this.foregroundContentView.measuredWidth - this.foregroundContentView.translationX,
+                velocity,
+                200,
+                60
+            ).toLong(),
+            UIAnimation.DECELERATE_INTERPOLATOR,
+            {
+                val factor = startFactor + diffFactor * it
+                weakSelf?.factorForwardBackwardAnimation(false, factor)
             }, {
                 weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
                 from?.viewDidDisappear()
                 to?.viewDidAppear()
                 from?.getWrap()?.removeFromSuperview()
+                completion()
             }
         )
     }
 
-    private fun factorForwardBackwardAnimation(forward: Boolean, factor: Float) {
-        val factor = factor.coerceAtLeast(0.0f)
+    //called when user touch up
+    fun backwardTranslationDone() {
+        UIApplication.post(this.runnable, 1400)
+    }
+
+    private fun factorForwardBackwardAnimation(forward: Boolean, f: Float) {
+        val factor = f.coerceAtLeast(0.0f)
 
         if (forward) {
             val shiftX = -(this.foregroundContentView.measuredWidth.toFloat() * TRANSLATION_FACTOR)
@@ -208,6 +252,7 @@ class UINavigationControllerTransitionCoordinator(
     }
 
     private fun finishForwardBackwardAnimation(view: View) {
+        UIApplication.cancel(runnable)
         view.removeFromSuperview()
 
         this.foregroundContentView.preventLayout()

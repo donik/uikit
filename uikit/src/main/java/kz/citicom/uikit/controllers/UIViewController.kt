@@ -44,7 +44,10 @@ abstract class UIViewController(context: UIActivity) : Wrapper<UIView>() {
         SupportedOrientation.ALL -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
     }
     open var isSwipeNavigationEnabled: Boolean = true
-    open var isIntercepted: Boolean = false
+
+    open fun isIntercepted(): Boolean {
+        return false
+    }
 
     override fun getWrap(): UIView? {
         if (this.view == null) {

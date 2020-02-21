@@ -63,7 +63,7 @@ class ActivityContentLayout(context: Context) : FrameLayout(context) {
             }
 
             if (hasCutout) {
-                backgroundPaint.color = Color.GREEN//-0x1000000
+                backgroundPaint.color = -0x1000000
                 val left = insets.systemWindowInsetLeft
                 if (left != 0) {
                     canvas?.drawRect(
