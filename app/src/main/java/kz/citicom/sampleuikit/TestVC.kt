@@ -7,8 +7,10 @@ import android.widget.TextView
 import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.tools.LayoutHelper
+import kz.citicom.uikit.tools.UIColor
 import kz.citicom.uikit.tools.UIFonts
 import kz.citicom.uikit.views.UIView
+import kz.citicom.uikit.views.components.RadialProgressView
 import kz.citicom.uikit.views.navigationBar.UINavigationBar
 
 class TestVC(context: UIActivity, open val index: Int = 0) : UIViewController(context) {
@@ -39,6 +41,12 @@ class TestVC(context: UIActivity, open val index: Int = 0) : UIViewController(co
                 LayoutHelper.WRAP_CONTENT,
                 Gravity.CENTER
             )
+        )
+
+        val progressView = RadialProgressView(weakContext, UIColor.getColor(R.color.black))
+        contentView.addView(
+            progressView,
+            LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT)
         )
 
         return contentView
