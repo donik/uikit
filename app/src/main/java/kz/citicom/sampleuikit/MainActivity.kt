@@ -13,6 +13,7 @@ class MainActivity : UIActivity() {
         super.onCreate(savedInstanceState)
 
         val vc = UINavigationController(this)
+        vc.push(TestVC(this), false)
 
         this.uiWindow = UIWindow(this)
         this.uiWindow?.rootViewController = vc

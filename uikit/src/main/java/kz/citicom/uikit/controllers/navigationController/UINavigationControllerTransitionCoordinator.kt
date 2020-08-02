@@ -1,10 +1,13 @@
 package kz.citicom.uikit.controllers.navigationController
 
+import android.util.Log
 import android.view.View
+import kz.citicom.uikit.R
 import kz.citicom.uikit.UIApplication
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.tools.LayoutHelper
 import kz.citicom.uikit.tools.UIAnimation
+import kz.citicom.uikit.tools.UIImage
 import kz.citicom.uikit.tools.weak
 import kz.citicom.uikit.views.UIView
 import kz.citicom.uikit.views.removeChildes
@@ -30,11 +33,43 @@ class UINavigationControllerTransitionCoordinator(
         }
     }
 
+    var mainContainer: UIView? = null
+        set(value) {
+            field = value
+            this.configureShadow()
+        }
+
+    var progressBlock: (() -> Unit)? = null
     var isAnimating: Boolean = false
         private set
     private var runnable = Runnable {
         this.isAnimating = false
         this.layoutIfRequested()
+    }
+
+    private fun configureShadow() {
+        val weakSelf by weak(this)
+        val layerShadowDrawable = UIImage.getDrawable(R.drawable.layer_shadow)
+        this.mainContainer?.drawBlock = { canvas ->
+            val child = weakSelf?.foregroundContentView
+            if (weakSelf != null && canvas != null) {
+                val foregroundTransitionX = (weakSelf?.foregroundContentView?.translationX ?: 0.0f).toInt()
+                val backgroundTransitionX = (weakSelf?.backgroundContentView?.translationX ?: 0.0f).toInt()
+
+                val transitionX = foregroundTransitionX.coerceAtLeast(backgroundTransitionX)
+
+                layerShadowDrawable?.setBounds(
+                    transitionX - layerShadowDrawable.intrinsicWidth,
+                    child?.top ?: 0,
+                    transitionX,
+                    child?.bottom ?: 0
+                )
+                layerShadowDrawable?.draw(canvas)
+            }
+        }
+        this.progressBlock = {
+            weakSelf?.mainContainer?.invalidate()
+        }
     }
 
     fun navigateForward(from: UIViewController?, to: UIViewController, animated: Boolean) {
@@ -55,7 +90,7 @@ class UINavigationControllerTransitionCoordinator(
         if (isAnimated) {
             this.isAnimating = true
             val weakSelf by weak(this)
-            UIView.animate(120, 300, UIAnimation.ACCELERATE_DECELERATE_INTERPOLATOR, {
+            UIView.animate(120, 300, UIAnimation.NAVIGATION_INTERPOLATOR, {
                 weakSelf?.factorForwardBackwardAnimation(true, it)
             }, {
                 weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
@@ -236,6 +271,7 @@ class UINavigationControllerTransitionCoordinator(
                 factor * this.foregroundContentView.measuredWidth.toFloat()
             this.backgroundContentView.translationX = (1 - factor) * shiftX
         }
+        this.progressBlock?.let { it() }
     }
 
     private fun prepareForwardAnimation() {

@@ -7,7 +7,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import kz.citicom.uikit.tools.UIIcons
+import kz.citicom.uikit.tools.UIImage
 import kz.citicom.uikit.tools.UIPaints
 import kz.citicom.uikit.tools.UIScreen
 import kz.citicom.uikit.tools.UISize
@@ -55,11 +55,11 @@ open class UIBarButtonItem(context: Context) : FrameLayout(context) {
             this.currentResource = resource
             if (this.icon != null) {
 
-                this.icon = UIIcons.getSparseIcon(resource)
+                this.icon = UIImage.getSparseIcon(resource)
                 invalidate()
                 return
             }
-            this.icon = UIIcons.getSparseIcon(resource)
+            this.icon = UIImage.getSparseIcon(resource)
         }
     }
 

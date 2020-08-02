@@ -1,10 +1,13 @@
 package kz.citicom.uikit.controllers.navigationController
 
+import android.util.Log
 import android.view.MotionEvent
+import kz.citicom.uikit.R
 import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.gestures.NavigationGestureRecognizer
 import kz.citicom.uikit.tools.LayoutHelper
+import kz.citicom.uikit.tools.UIImage
 import kz.citicom.uikit.tools.weak
 import kz.citicom.uikit.views.UIView
 
@@ -48,20 +51,20 @@ open class UINavigationController(context: UIActivity) : UIViewController(contex
         )
     }
 
-    override fun loadView(): UIView? {
-        val contentView = UIView(this.weakContext ?: return null)
+    override fun loadView() {
+        super.loadView()
 
-        contentView.addView(
+        this.transitionCoordinator.mainContainer = this.view
+
+        this.view?.addView(
             this.backgroundContentView,
             LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT)
         )
 
-        contentView.addView(
+        this.view?.addView(
             this.foregroundContentView,
             LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT)
         )
-
-        return contentView
     }
 
     fun setViewControllers(viewControllers: Array<UIViewController>, animated: Boolean = true) {

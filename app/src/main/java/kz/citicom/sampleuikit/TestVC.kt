@@ -14,21 +14,25 @@ import kz.citicom.uikit.views.components.RadialProgressView
 import kz.citicom.uikit.views.navigationBar.UINavigationBar
 
 class TestVC(context: UIActivity, open val index: Int = 0) : UIViewController(context) {
-    override fun loadView(): UIView? {
-        val contentView = UIView(weakContext ?: return null)
+    override fun loadView() {
+        super.loadView()
 
-        val navigationBar = UINavigationBar(weakContext)
+        val context = this.weakContext ?: return
+        val contentView = this.view ?: return
+
+        val navigationBar = UINavigationBar(context)
         contentView.addView(
             navigationBar,
             LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT)
         )
+        navigationBar.setBackgroundColor(UIColor.getColor("#eeeeee"))
 
-        contentView.setBackgroundResource(R.color.divider)
-        if (index % 2 == 0) {
-            contentView.setBackgroundResource(R.drawable.first)
-        } else {
-            contentView.setBackgroundResource(R.drawable.second)
-        }
+        contentView.setBackgroundColor(UIColor.getColor("#ffffff"))
+//        if (index % 2 == 0) {
+//            contentView.setBackgroundResource(R.drawable.first)
+//        } else {
+//            contentView.setBackgroundResource(R.drawable.second)
+//        }
 
         val textView = TextView(weakContext)
         textView.text = "INDEX OF PAGE CENTERED: $index"
@@ -48,8 +52,6 @@ class TestVC(context: UIActivity, open val index: Int = 0) : UIViewController(co
             progressView,
             LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT)
         )
-
-        return contentView
     }
 
     override fun toString(): String {

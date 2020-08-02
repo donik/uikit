@@ -6,14 +6,16 @@ import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Canvas
 import android.os.Build
+import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import kz.citicom.uikit.tools.UIAnimation
 
-open class UIView(context: Context) : FrameLayout(context) {
+open class UIView : FrameLayout {
     companion object {
         fun animate(
             delay: Long,
@@ -64,6 +66,17 @@ open class UIView(context: Context) : FrameLayout(context) {
             setWillNotDraw(!value)
         }
 
+    var drawBlock: ((canvas: Canvas?) -> Unit)? = null
+
+    constructor(context: Context) : this(context, null)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+    }
+
     fun preventLayout() {
         this.preventLayout = true
     }
@@ -112,6 +125,12 @@ open class UIView(context: Context) : FrameLayout(context) {
 
     override fun hasOverlappingRendering(): Boolean {
         return false
+    }
+
+    override fun draw(canvas: Canvas?) {
+        super.draw(canvas)
+
+        this.drawBlock?.let { it(canvas) }
     }
 }
 

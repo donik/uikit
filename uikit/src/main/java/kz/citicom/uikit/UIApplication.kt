@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Handler
 import androidx.annotation.CallSuper
 import kz.citicom.uikit.tools.UIFonts
+import kz.citicom.uikit.tools.UIImage
 import kz.citicom.uikit.tools.UIScreen
 import kz.citicom.uikit.tools.UISize
 import java.io.File
@@ -44,6 +45,7 @@ abstract class UIApplication : Application() {
         UIScreen.init(this)
         UISize.init(this)
         UIFonts.init(this)
+        UIImage.init(this)
     }
 
 }

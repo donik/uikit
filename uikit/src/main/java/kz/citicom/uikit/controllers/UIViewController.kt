@@ -1,8 +1,14 @@
 package kz.citicom.uikit.controllers
 
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import androidx.annotation.CallSuper
+import androidx.annotation.IntegerRes
+import androidx.annotation.LayoutRes
+import kotlinx.android.synthetic.main.ui_view.view.*
+import kz.citicom.uikit.R
 import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.controllers.navigationController.UINavigationController
 import kz.citicom.uikit.tools.UIEdgeInsets
@@ -15,7 +21,7 @@ import java.lang.ref.WeakReference
 
 abstract class UIViewController(context: UIActivity) : Wrapper<UIView>() {
     protected var view: UIView? = null
-        private set
+        protected set
 
     var isViewLoaded: Boolean = false
         private set
@@ -38,6 +44,9 @@ abstract class UIViewController(context: UIActivity) : Wrapper<UIView>() {
             _weakNavigationController = value
         }
 
+    @LayoutRes
+    internal var viewResource: Int = R.layout.ui_view
+
     protected var supportedOrientation: SupportedOrientation = SupportedOrientation.ALL
     private val activityOrientation = when (supportedOrientation) {
         SupportedOrientation.PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -51,13 +60,23 @@ abstract class UIViewController(context: UIActivity) : Wrapper<UIView>() {
 
     override fun getWrap(): UIView? {
         if (this.view == null) {
-            this.view = loadView()
+            this.loadView()
             this.viewDidLoad()
         }
         return this.view
     }
 
-    abstract fun loadView(): UIView?
+    @SuppressLint("Assert")
+    @CallSuper
+    protected open fun loadView() {
+        if (this.weakContext == null) {
+            assert(false) { "Error context null" }
+        }
+
+        val context = this.weakContext ?: return
+        val view = LayoutInflater.from(context).inflate(this.viewResource, null) as? UIView//?: UIView(context)
+        this.view = view
+    }
 
     @CallSuper
     open fun viewDidLoad() {

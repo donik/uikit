@@ -1,12 +1,17 @@
 package kz.citicom.uikit.views.navigationBar
 
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import kz.citicom.uikit.R
 import kz.citicom.uikit.tools.LayoutHelper
+import kz.citicom.uikit.tools.UIImage
 import kz.citicom.uikit.tools.UIScreen
 import kz.citicom.uikit.tools.UISize
 import kz.citicom.uikit.views.UIView
@@ -20,8 +25,11 @@ class UINavigationBar(context: Context) : UIView(context) {
 
     private val contentLayout: FrameLayout = FrameLayout(context)
 
+    private var headerShowDrawable: Drawable? = UIImage.getDrawable(R.drawable.header_shadow)
+
     init {
-        this.setPadding(0, UIScreen.statusBarHeight, 0, 0)
+
+        this.setPadding(0, UIScreen.statusBarHeight, 0, this.headerShowDrawable?.intrinsicHeight ?: 0)
         this.setBackgroundColor(Color.RED)
 
         val verticalLayout = LinearLayout(context)
@@ -33,7 +41,6 @@ class UINavigationBar(context: Context) : UIView(context) {
 
         val topContentLayout = LinearLayout(context)
         topContentLayout.orientation = LinearLayout.HORIZONTAL
-        topContentLayout.setBackgroundColor(Color.GREEN)
         topContentLayout.setPadding(UIScreen.dp(16), 0, UIScreen.dp(16), 0)
         verticalLayout.addView(
             topContentLayout,
@@ -43,7 +50,6 @@ class UINavigationBar(context: Context) : UIView(context) {
             )
         )
 
-        this.leftItemsLayout.setBackgroundColor(Color.LTGRAY)
         topContentLayout.addView(
             this.leftItemsLayout,
             LayoutHelper.createLinear(
@@ -54,7 +60,6 @@ class UINavigationBar(context: Context) : UIView(context) {
             )
         )
 
-        this.titleLayout.setBackgroundColor(Color.BLUE)
         topContentLayout.addView(
             this.titleLayout,
             LayoutHelper.createLinear(
@@ -65,7 +70,6 @@ class UINavigationBar(context: Context) : UIView(context) {
             )
         )
 
-        this.rightItemsLayout.setBackgroundColor(Color.CYAN)
         topContentLayout.addView(
             this.rightItemsLayout,
             LayoutHelper.createLinear(
@@ -82,7 +86,15 @@ class UINavigationBar(context: Context) : UIView(context) {
         )
     }
 
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
 
+        val shadowDrawable = this.headerShowDrawable ?: return
+
+        shadowDrawable.setBounds(0, measuredHeight - shadowDrawable.intrinsicHeight, measuredWidth, measuredHeight)
+        shadowDrawable.draw(canvas ?: return)
+        Log.e("DRAW", "NAVIGATION BAR DRAW")
+    }
 
     private class TitleContentView(context: Context) : FrameLayout(context) {
         private val mainContent: FrameLayout = FrameLayout(context)
