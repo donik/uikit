@@ -1,36 +1,24 @@
 package kz.citicom.uikit.views
 
-import android.content.Context
-import android.graphics.Color
-import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
-import androidx.core.view.isVisible
 import kz.citicom.uikit.UIActivity
+import kz.citicom.uikit.uiabstract.UIWindowAbstract
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.tools.LayoutHelper
-import kz.citicom.uikit.tools.WeakRef
 import java.lang.ref.WeakReference
 import java.util.*
 
-class UIWindow(
+open class UIWindow(
     activity: UIActivity
-) {
-    private var key: String? = null
-    private var view: FrameLayout = object : FrameLayout(activity) {
-        override fun onTouchEvent(event: MotionEvent?): Boolean {
-            return rootViewController?.onTouchEvent(event) ?: false
-        }
-
-        override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-            return rootViewController?.onInterceptTouchEvent(ev) ?: false
-        }
-    }
+) : UIWindowAbstract() {
+    override var key: String? = null
+    private var view: FrameLayout = FrameLayout(activity)
 
     private var _weakActivity: WeakReference<UIActivity> = WeakReference(activity)
-    private val weakActivity: UIActivity? = _weakActivity.get()
+    override val weakActivity: UIActivity? = _weakActivity.get()
 
-    var rootViewController: UIViewController? = null
+    override var rootViewController: UIViewController? = null
         set(value) {
             if (field == value) {
                 return
@@ -40,7 +28,7 @@ class UIWindow(
             field = value
             this.updateRootController(tempRootController)
         }
-    var isHidden: Boolean
+    override var isHidden: Boolean
         get() = this.view.visibility != View.VISIBLE
         set(hidden) {
             this.view.visibility = if (hidden) {
@@ -60,7 +48,7 @@ class UIWindow(
         this.view.visibility = View.GONE
     }
 
-    fun makeKeyAndVisible() {
+    override fun makeKeyAndVisible() {
         if (this.key != null) {
             return
         }
@@ -82,7 +70,7 @@ class UIWindow(
         this.rootViewController?.viewDidAppear()
     }
 
-    fun resignKey() {
+    override fun resignKey() {
         val windowKey = this.key ?: return
         this.view.removeFromSuperview()
         this.weakActivity?.keyWindows?.remove(windowKey)
@@ -91,11 +79,12 @@ class UIWindow(
 
     private fun updateRootController(oldController: UIViewController?) {
         oldController?.viewWillDisappear()
-        oldController?.getWrap()?.removeFromSuperview()
+        oldController?.view?.removeFromSuperview()
         oldController?.viewDidDisappear()
+        oldController?.destroy()
 
         val rootController = this.rootViewController ?: return
-        val view = rootController.getWrap()
+        val view = rootController.view
 
         if (this.key != null) {
             rootController.viewWillAppear()
@@ -109,8 +98,12 @@ class UIWindow(
         }
     }
 
-    fun onBackPressed() {
-        this.rootViewController?.onBackPressed()
+    override fun onBackPressed() : Boolean {
+        return this.rootViewController?.onBackPressed() ?: false
+    }
+
+    override fun containerLayoutUpdated() {
+        this.rootViewController?.containerLayoutUpdated()
     }
 
 }

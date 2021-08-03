@@ -7,16 +7,22 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.LayoutRes
 import kz.citicom.uikit.tools.UIAnimation
 
 open class UIView : FrameLayout {
     companion object {
+        private val LAYER_PAINT = Paint()
+
         fun animate(
             delay: Long,
             duration: Long,
@@ -51,9 +57,23 @@ open class UIView : FrameLayout {
             view.isClickable = true
             view.isFocusableInTouchMode = false
             view.isFocusable = false
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && view is ViewGroup) {
-                view.isMotionEventSplittingEnabled = false
+        }
+
+        fun setLayerType(view: View, type: Int) {
+            view.post {
+                view.setLayerType(type, LAYER_PAINT)
             }
+        }
+
+        fun <T : View> getLayout(context: Context, @LayoutRes res: Int): T {
+            return LayoutInflater.from(context).inflate(res, null) as T::class.java
+        }
+
+        fun setBackground(view: View?, drawable: Drawable) {
+            if (view == null) {
+                return
+            }
+            view.background = drawable
         }
     }
 

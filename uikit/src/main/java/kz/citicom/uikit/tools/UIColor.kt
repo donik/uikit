@@ -1,42 +1,28 @@
 package kz.citicom.uikit.tools
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.core.view.ViewCompat
+import kz.citicom.uikit.R
+
 import kz.citicom.uikit.UIApplication
 
+
 object UIColor {
-    private val colors = arrayOf(
-        "#FC5C51",
-        "#FA790F",
-        "#0FB297",
-        "#3CA5EC",
-        "#3D72ED",
-        "#895DD5",
-        "#00A1C4",
-        "#FF1744",
-        "#B71C1C",
-        "#C51162",
-        "#FF80AB",
-        "#6200EA",
-        "#8C9EFF",
-        "#00E5FF",
-        "#1DE9B6",
-        "#AEEA00",
-        "#FFD600",
-        "#BF360C",
-        "#3E2723",
-        "#795548",
-        "#1A237E"
-    )
 
-    fun getUserColor(userID: Int): Int {
-        val index = Math.abs(userID % colors.size)
-        val color = colors[index]
-        return getColor(color)
-    }
+    val white = getColor("#ffffff")
+    val black = getColor("#000000")
+    val red = getColor("#ff0000")
+    val clear = getColor(R.color.clear)
 
-    fun getColor(color: String): Int {
-        return Color.parseColor(color)
+    fun getColor(color: String, alpha: Float = 1.0f): Int {
+        val color = Color.parseColor(color)
+
+        return if (alpha == 1.0f) {
+            color
+        } else {
+            (Color.alpha(color).toFloat() * alpha).toInt() shl 24 or (ViewCompat.MEASURED_SIZE_MASK and color)
+        }
     }
 
     fun getColor(color: Int): Int {
@@ -48,7 +34,10 @@ object UIColor {
     }
 
     fun alphaColor(alpha: Float, color: Int): Int {
-        return if (alpha == 1.0f) color else color((Color.alpha(color).toFloat() * alpha).toInt(), color)
+        return if (alpha == 1.0f) color else color(
+            (Color.alpha(color).toFloat() * alpha).toInt(),
+            color
+        )
     }
 
     fun compositeColor(color: Int, overlay: Int): Int {
@@ -58,8 +47,31 @@ object UIColor {
         val b = Color.blue(color)
         return Color.rgb(
             (Color.red(overlay).toFloat() * alpha).toInt() + (r.toFloat() * (1.0f - alpha)).toInt(),
-            (Color.green(overlay).toFloat() * alpha).toInt() + (g.toFloat() * (1.0f - alpha)).toInt(),
+            (Color.green(overlay)
+                .toFloat() * alpha).toInt() + (g.toFloat() * (1.0f - alpha)).toInt(),
             (Color.blue(overlay).toFloat() * alpha).toInt() + (b.toFloat() * (1.0f - alpha)).toInt()
         )
+    }
+
+    fun selectedColorStateList(selectedColor: Int, defaultColor: Int): ColorStateList {
+        val states = arrayOf(
+            intArrayOf(android.R.attr.state_selected),
+            intArrayOf()
+        )
+
+        val colors = intArrayOf(
+            selectedColor,
+            defaultColor
+        )
+
+        return ColorStateList(states, colors)
+    }
+
+    fun isColorDark(color: Int): Boolean {
+        val darkness =
+            1 - (0.299 * Color.red(color) + 0.587 * Color.green(
+                color
+            ) + 0.114 * Color.blue(color)) / 255
+        return darkness >= 0.5
     }
 }

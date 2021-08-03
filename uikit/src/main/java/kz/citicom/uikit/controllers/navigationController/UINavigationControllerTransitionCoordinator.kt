@@ -3,6 +3,7 @@ package kz.citicom.uikit.controllers.navigationController
 import android.util.Log
 import android.view.View
 import kz.citicom.uikit.R
+
 import kz.citicom.uikit.UIApplication
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.tools.LayoutHelper
@@ -42,6 +43,7 @@ class UINavigationControllerTransitionCoordinator(
     var progressBlock: (() -> Unit)? = null
     var isAnimating: Boolean = false
         private set
+    private var transitionType: UIViewController.TransitionType = UIViewController.TransitionType.PUSH
     private var runnable = Runnable {
         this.isAnimating = false
         this.layoutIfRequested()
@@ -72,13 +74,13 @@ class UINavigationControllerTransitionCoordinator(
         }
     }
 
-    fun navigateForward(from: UIViewController?, to: UIViewController, animated: Boolean) {
+    fun navigateForward(from: UIViewController?, to: UIViewController, animated: Boolean, completion: (() -> Unit)? = null) {
         val isAnimated = from != null && animated
         from?.viewWillDisappear()
 
-        val view = to.getWrap()
+        val view = to.view
         to.viewWillAppear()
-        prepareForwardAnimation()
+        prepareForwardAnimation(to)
 
         backgroundContentView.preventLayout()
         backgroundContentView.removeAllViews()
@@ -93,25 +95,27 @@ class UINavigationControllerTransitionCoordinator(
             UIView.animate(120, 300, UIAnimation.NAVIGATION_INTERPOLATOR, {
                 weakSelf?.factorForwardBackwardAnimation(true, it)
             }, {
-                weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
+                weakSelf?.finishForwardBackwardAnimation(view)
                 from?.viewDidDisappear()
                 to.viewDidAppear()
-                from?.getWrap()?.removeFromSuperview()
+                from?.view?.removeFromSuperview()
+                completion?.let { it() }
             })
         } else {
-            finishForwardBackwardAnimation(view ?: return)
+            finishForwardBackwardAnimation(view)
             from?.viewDidDisappear()
             to.viewDidAppear()
-            from?.getWrap()?.removeFromSuperview()
+            from?.view?.removeFromSuperview()
+            completion?.let { it() }
         }
     }
 
-    fun navigateBackward(from: UIViewController, to: UIViewController, animated: Boolean) {
+    fun navigateBackward(from: UIViewController, to: UIViewController, animated: Boolean, completion: (() -> Unit)? = null) {
         from.viewWillDisappear()
 
-        val view = to.getWrap()
+        val view = to.view
         to.viewWillAppear()
-        prepareBackwardAnimation()
+        prepareBackwardAnimation(from)
 
         backgroundContentView.preventLayout()
         backgroundContentView.removeAllViews()
@@ -127,16 +131,18 @@ class UINavigationControllerTransitionCoordinator(
             UIView.animate(120, 300, UIAnimation.DECELERATE_INTERPOLATOR, {
                 weakSelf?.factorForwardBackwardAnimation(false, it)
             }, {
-                weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
+                weakSelf?.finishForwardBackwardAnimation(view)
                 from.viewDidDisappear()
                 to.viewDidAppear()
-                from.getWrap()?.removeFromSuperview()
+                from.view.removeFromSuperview()
+                completion?.let { it() }
             })
         } else {
-            finishForwardBackwardAnimation(view ?: return)
+            finishForwardBackwardAnimation(view)
             from.viewDidDisappear()
             to.viewDidAppear()
-            from.getWrap()?.removeFromSuperview()
+            from.view.removeFromSuperview()
+            completion?.let { it() }
         }
     }
 
@@ -146,11 +152,10 @@ class UINavigationControllerTransitionCoordinator(
         }
 
         from?.viewWillDisappear()
-
         this.isAnimating = true
-        val view = to.getWrap()
+        val view = to.view
         to.viewWillAppear()
-        prepareBackwardAnimation()
+        prepareBackwardAnimation(from ?: return false)
 
         backgroundContentView.preventLayout()
         backgroundContentView.removeAllViews()
@@ -167,7 +172,8 @@ class UINavigationControllerTransitionCoordinator(
             return
         }
 
-        val factor = px / this.foregroundContentView.measuredWidth
+        val factor = 1.0f.coerceAtMost(0.0f.coerceAtLeast(px / this.foregroundContentView.measuredWidth))
+
         this.factorForwardBackwardAnimation(false, factor)
     }
 
@@ -176,12 +182,12 @@ class UINavigationControllerTransitionCoordinator(
             return
         }
 
-        val view = from?.getWrap()
+        val view = from?.view
         if (this.backgroundContentView.translationX == 0.0f) {
             finishForwardBackwardAnimation(view ?: return)
             from.viewDidAppear()
             to?.viewDidDisappear()
-            to?.getWrap()?.removeFromSuperview()
+            to?.view?.removeFromSuperview()
             return
         }
 
@@ -204,7 +210,7 @@ class UINavigationControllerTransitionCoordinator(
                 weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
                 from?.viewDidAppear()
                 to?.viewDidDisappear()
-                to?.getWrap()?.removeFromSuperview()
+                to?.view?.removeFromSuperview()
             }
         )
     }
@@ -214,12 +220,12 @@ class UINavigationControllerTransitionCoordinator(
             return
         }
 
-        val view = to?.getWrap()
+        val view = to?.view
         if (this.backgroundContentView.translationX == 0.0f) {
             finishForwardBackwardAnimation(view ?: return)
             from?.viewDidDisappear()
             to.viewDidAppear()
-            from?.getWrap()?.removeFromSuperview()
+            from?.view?.removeFromSuperview()
             completion()
             return
         }
@@ -244,7 +250,7 @@ class UINavigationControllerTransitionCoordinator(
                 weakSelf?.finishForwardBackwardAnimation(view ?: return@animate)
                 from?.viewDidDisappear()
                 to?.viewDidAppear()
-                from?.getWrap()?.removeFromSuperview()
+                from?.view?.removeFromSuperview()
                 completion()
             }
         )
@@ -256,35 +262,64 @@ class UINavigationControllerTransitionCoordinator(
     }
 
     private fun factorForwardBackwardAnimation(forward: Boolean, f: Float) {
-        val factor = f.coerceAtLeast(0.0f)
+        val factor = Math.min(f.coerceAtLeast(0.0f), 1.0f)
 
-        if (forward) {
-            val shiftX = -(this.foregroundContentView.measuredWidth.toFloat() * TRANSLATION_FACTOR)
-
-            this.backgroundContentView.translationX =
-                (1 - factor) * this.backgroundContentView.measuredWidth.toFloat()
-            this.foregroundContentView.translationX = shiftX * factor
+        if (this.transitionType == UIViewController.TransitionType.FADE) {
+            if (forward) {
+                this.backgroundContentView.alpha = factor * 1.0f
+                this.backgroundContentView.translationX = 0.0f
+                this.foregroundContentView.translationX = 0.0f
+            } else {
+                this.foregroundContentView.alpha = (1 - factor) * 1.0f
+                this.foregroundContentView.translationX = 0.0f
+                this.backgroundContentView.translationX = 0.0f
+            }
         } else {
-            val shiftX = -(this.backgroundContentView.measuredWidth.toFloat() * TRANSLATION_FACTOR)
+            if (forward) {
+                val shiftX = -(this.foregroundContentView.measuredWidth.toFloat() * TRANSLATION_FACTOR)
 
-            this.foregroundContentView.translationX =
-                factor * this.foregroundContentView.measuredWidth.toFloat()
-            this.backgroundContentView.translationX = (1 - factor) * shiftX
+                this.backgroundContentView.translationX =
+                    (1 - factor) * this.backgroundContentView.measuredWidth.toFloat()
+                this.foregroundContentView.translationX = shiftX * factor
+            } else {
+                val shiftX = -(this.backgroundContentView.measuredWidth.toFloat() * TRANSLATION_FACTOR)
+
+                this.foregroundContentView.translationX =
+                    factor * this.foregroundContentView.measuredWidth.toFloat()
+                this.backgroundContentView.translationX = (1 - factor) * shiftX
+            }
         }
+
         this.progressBlock?.let { it() }
     }
 
-    private fun prepareForwardAnimation() {
+    private fun prepareForwardAnimation(rightController: UIViewController) {
+        this.transitionType = rightController.transitionType
+
+        if (this.transitionType == UIViewController.TransitionType.FADE) {
+            backgroundContentView.translationX = 0.0f
+            foregroundContentView.translationX = 0.0f
+            backgroundContentView.alpha = 0.0f
+        } else {
+            backgroundContentView.translationX = backgroundContentView.measuredWidth.toFloat()
+            foregroundContentView.translationX = 0.0f
+        }
         backgroundContentView.bringToFront()
-        backgroundContentView.translationX = backgroundContentView.measuredWidth.toFloat()
-        foregroundContentView.translationX = 0.0f
     }
 
-    private fun prepareBackwardAnimation() {
-        val shiftX = -(backgroundContentView.measuredWidth.toFloat() * TRANSLATION_FACTOR)
+    private fun prepareBackwardAnimation(rightController: UIViewController) {
+        this.transitionType = rightController.transitionType
+
         foregroundContentView.bringToFront()
-        foregroundContentView.translationX = 0.0f
-        backgroundContentView.translationX = shiftX
+        if (this.transitionType == UIViewController.TransitionType.FADE) {
+            backgroundContentView.translationX = 0.0f
+            foregroundContentView.translationX = 0.0f
+            foregroundContentView.alpha = 1.0f
+        } else {
+            val shiftX = -(backgroundContentView.measuredWidth.toFloat() * TRANSLATION_FACTOR)
+            foregroundContentView.translationX = 0.0f
+            backgroundContentView.translationX = shiftX
+        }
     }
 
     private fun finishForwardBackwardAnimation(view: View) {
@@ -305,6 +340,8 @@ class UINavigationControllerTransitionCoordinator(
 
         this.foregroundContentView.translationX = 0.0f
         this.backgroundContentView.translationX = 0.0f
+        this.foregroundContentView.alpha = 1.0f
+        this.backgroundContentView.alpha = 1.0f
         this.foregroundContentView.bringToFront()
 
         this.foregroundContentView.layoutIfRequested()

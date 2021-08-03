@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.UIKit" parent="@android:style/Theme.Material.Light">
+<!--    parent="@android:style/Theme.Material.Light"-->
+    <style name="Theme.UIKit" parent="Theme.MaterialComponents">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBarOverlay">false</item>

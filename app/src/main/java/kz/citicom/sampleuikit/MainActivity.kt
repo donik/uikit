@@ -3,30 +3,25 @@ package kz.citicom.sampleuikit
 import android.os.Bundle
 import android.util.Log
 import kz.citicom.uikit.UIActivity
+import kz.citicom.uikit.uiabstract.UIWindowAbstract
 import kz.citicom.uikit.controllers.navigationController.UINavigationController
+import kz.citicom.uikit.presentationData.themes.getPresentationData
 import kz.citicom.uikit.views.UIWindow
 
 class MainActivity : UIActivity() {
-    override var uiWindow: UIWindow? = null
+    override var uiUIWindow: UIWindowAbstract? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val vc = UINavigationController(this)
-        vc.push(TestVC(this), false)
+//        val vc = TestVC(this, 0)
+//        val vc = UITabBarController(this, getPresentationData())
+        val vc = UINavigationController(this, getPresentationData())
+        vc.setViewControllers(arrayOf(TestVC(this, 0)))
 
-        this.uiWindow = UIWindow(this)
-        this.uiWindow?.rootViewController = vc
-        this.uiWindow?.makeKeyAndVisible()
-
-        var index = 0
-        vc.getWrap()?.setOnClickListener {
-            index++
-
-            val root = TestVC(this, index)
-
-            vc.push(root, true)
-        }
+        this.uiUIWindow = UIWindow(this)
+        this.uiUIWindow?.rootViewController = vc
+        this.uiUIWindow?.makeKeyAndVisible()
     }
 
     override fun onDestroy() {
@@ -34,5 +29,4 @@ class MainActivity : UIActivity() {
 
         Log.e("ONDE", "ONDESTROY")
     }
-
 }

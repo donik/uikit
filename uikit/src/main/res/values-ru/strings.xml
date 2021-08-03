@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">UIKit</string>
+    <string name="commonBack">Назад</string>
+    <string name="commonClose">Закрыть</string>
+    <string name="accessibility_service_description">Accessibility service description</string>
+    <string name="manual_mode_title">Manual mode</string>
+    <string name="manual_mode_description">Select points on the screen and perform swipe or tap with specified interval and duration</string>
+    <string name="record_mode_title">RECORD MODE</string>
+    <string name="record_mode_description">Record and reproduce your touch input as well as system actions like back, menu and last apps</string>
+    <string name="settings_manual_mode_section_title">Manual mode settings</string>
+    <string name="settings_manual_mode_click_duration">Click duration</string>
+    <string name="settings_manual_mode_swipe_duration">Swipe duration</string>
+    <string name="settings_stop_after">Stop after</string>
+    <string name="settings_repeat_interval_between_cycles">Repeat interval between cycles</string>
+    <string name="settings_recording_mode_section_title">Record mode settings</string>
+    <string name="settings_title">Settings</string>
+    <string name="troubleshooting_title">Troubleshooting</string>
+    <string name="troubleshooting_app_not_work_title">If the app doesn\'t work</string>
+    <string name="troubleshooting_app_not_work_subtitle">If the app does not work, you can disable “Accessibility service” then enable again to solve this problem</string>
+    <string name="troubleshooting_app_not_work_button_text">RE-ACTIVE</string>
+    <string name="troubleshooting_permissions_subtitle">Sometime the app is killed by system. Please allow  Autoclicker to always run in the background, else our service will not work</string>
+    <string name="troubleshooting_permissions_button_text">ALLOW</string>
+    <string name="troubleshooting_nothing_help_title">Nothing helps?</string>
+    <string name="troubleshooting_nothing_help_subtitle">Send is logs using button bellow. We will try to analyze them.</string>
+    <string name="troubleshooting_nothing_help_button_text">SEND LOGS</string>
+    <string name="invite_text">Download Autoclicker</string>
+    <string name="appVersion">Autoclicker for Android %1$s</string>
+    <string name="Feedback">Feedback</string>
+    <string name="privacyTitle">Privacy policy</string>
+</resources>

@@ -1,6 +1,5 @@
 package kz.citicom.uikit.controllers.navigationController
 
-import android.util.Log
 import kz.citicom.uikit.controllers.UIViewController
 import kz.citicom.uikit.tools.weak
 
@@ -35,7 +34,7 @@ class UINavigationControllerStack {
         return this.stack[index]
     }
 
-    fun set(viewControllers: ArrayList<UIViewController>) {
+    fun set(viewControllers: Array<UIViewController>) {
         synchronized(lock) {
             val controllers = viewControllers.map {
                 val controller by weak(it)
@@ -64,6 +63,26 @@ class UINavigationControllerStack {
         val controller by weak(viewController)
         this.stack.add(controller)
         this.currentIndex++
+    }
+
+    fun clearNotInControllers(viewControllers: Array<UIViewController>) {
+        val controllers = this.stack.filter { viewControllers.indexOf(it) == -1 }
+
+        if (controllers.isNotEmpty()) {
+            for (viewController in controllers) {
+                if (viewController?.isDestroyed == true) {
+                    continue
+                }
+
+                viewController?.destroy()
+            }
+        }
+        this.stack.clear()
+        this.currentIndex = -1
+
+        viewControllers.forEach {
+            push(it)
+        }
     }
 
     fun remove(index: Int): UIViewController? {

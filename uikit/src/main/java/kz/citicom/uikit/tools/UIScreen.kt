@@ -16,9 +16,16 @@ object UIScreen {
     private var screenPoint: Point? = null
     var statusBarHeight: Int = 0
 
+    var configurationChangesCallBack: (() -> Unit)? = null
+
     fun init(context: Context) {
         this.appContext = context
 
+        onConfigurationChanged()
+    }
+
+    fun onConfigurationChanged() {
+        val context = this.appContext ?: return
         density = context.resources.displayMetrics.density
         val manager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
         manager?.defaultDisplay?.getMetrics(displayMetrics)
@@ -28,6 +35,8 @@ object UIScreen {
         if (resourceId > 0) {
             statusBarHeight =  appContext?.resources?.getDimensionPixelSize(resourceId) ?: 0
         }
+
+        this.configurationChangesCallBack?.let { it() }
     }
 
     fun revertDp(size: Float): Int {
@@ -64,5 +73,9 @@ object UIScreen {
 
     fun currentHeight(): Int {
         return displayMetrics.widthPixels
+    }
+
+    fun smallestSide(): Int {
+        return Math.min(this.displayMetrics.widthPixels, this.displayMetrics.heightPixels)
     }
 }

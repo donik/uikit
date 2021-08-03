@@ -2,7 +2,6 @@ package kz.citicom.uikit.tools
 
 import android.graphics.*
 import android.util.SparseArray
-import kz.citicom.uikit.R
 
 object UIPaints {
     private var bitmap: Paint? = null
@@ -10,6 +9,26 @@ object UIPaints {
     private var porterDuffPaint: Paint? = null
     private var whitePDPaint: Paint? = null
     private var lastPorterDuffColor: Int = 0
+
+    private var checkboxSquareBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var checkboxSquareCheckPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var checkboxSquareEraserPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    fun getCheckboxSquareCheckPaint(): Paint {
+        checkboxSquareCheckPaint.style = Paint.Style.STROKE
+        checkboxSquareCheckPaint.strokeWidth = UIScreen.dpf(2.0f)
+        return checkboxSquareCheckPaint
+    }
+
+    fun getCheckboxSquareBackgroundPaint(): Paint {
+        return checkboxSquareBackgroundPaint
+    }
+
+    fun getCheckboxSquareEraserPaint(): Paint {
+        checkboxSquareEraserPaint.color = 0
+        checkboxSquareEraserPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+        return checkboxSquareEraserPaint
+    }
 
     fun getBitmapPaint(): Paint? {
         if (bitmap == null) {

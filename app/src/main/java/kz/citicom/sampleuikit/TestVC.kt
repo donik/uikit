@@ -1,91 +1,50 @@
 package kz.citicom.sampleuikit
 
 import android.util.Log
-import android.util.TypedValue
-import android.view.Gravity
 import android.widget.TextView
+import butterknife.BindView
 import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.controllers.UIViewController
-import kz.citicom.uikit.tools.LayoutHelper
-import kz.citicom.uikit.tools.UIColor
-import kz.citicom.uikit.tools.UIFonts
-import kz.citicom.uikit.views.UIView
-import kz.citicom.uikit.views.components.RadialProgressView
-import kz.citicom.uikit.views.navigationBar.UINavigationBar
+import kz.citicom.uikit.presentationData.themes.getPresentationData
+import butterknife.OnClick
+import kz.citicom.uikit.controllers.modal.ModalWindow
+import kz.citicom.uikit.controllers.navigationController.UINavigationController
 
-class TestVC(context: UIActivity, open val index: Int = 0) : UIViewController(context) {
+class TestVC(context: UIActivity, open val index: Int = 0) :
+    UIViewController(context, presentationData = getPresentationData()) {
+
+    @BindView(R.id.testBTN)
+    lateinit var buttonTextView: TextView
+
     override fun loadView() {
         super.loadView()
 
-        val context = this.weakContext ?: return
-        val contentView = this.view ?: return
+        Log.e("LOAD", "LOAD TEST")
 
-        val navigationBar = UINavigationBar(context)
-        contentView.addView(
-            navigationBar,
-            LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT)
-        )
-        navigationBar.setBackgroundColor(UIColor.getColor("#eeeeee"))
+        this.buttonTextView.setText("HELLO ${index}")
+    }
 
-        contentView.setBackgroundColor(UIColor.getColor("#ffffff"))
-//        if (index % 2 == 0) {
-//            contentView.setBackgroundResource(R.drawable.first)
-//        } else {
-//            contentView.setBackgroundResource(R.drawable.second)
-//        }
-
-        val textView = TextView(weakContext)
-        textView.text = "INDEX OF PAGE CENTERED: $index"
-        textView.typeface = UIFonts.robotoBold
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18.0f)
-        contentView.addView(
-            textView,
-            LayoutHelper.createFrame(
-                LayoutHelper.WRAP_CONTENT,
-                LayoutHelper.WRAP_CONTENT,
-                Gravity.CENTER
-            )
-        )
-
-        val progressView = RadialProgressView(weakContext, UIColor.getColor(R.color.black))
-        contentView.addView(
-            progressView,
-            LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT)
-        )
+    override fun getLayoutRes(): Int {
+        return R.layout.test_controller_layout
     }
 
     override fun toString(): String {
         return "Controller destroyed index: $index"
     }
 
-    override fun viewDidLoad() {
-        super.viewDidLoad()
-
-//        Log.e("TestVC", "viewDidLoad")
+    @OnClick(R.id.testBTN)
+    fun clickTest() {
+        Log.e("CLICKED", "TEST BTN CLICKED!!!")
+//        navigationController?.push(TestVC(this.context as? UIActivity ?: return, index + 1))
+//        present()
+        val dialog = ModalWindow(
+            context,
+            UINavigationController(
+                context as? UIActivity ?: return,
+                arrayListOf(TestModalWithAnimationVC(context as? UIActivity ?: return)),
+                presentationData
+            )
+        )
+        dialog.show()
     }
-
-    override fun viewWillAppear() {
-        super.viewWillAppear()
-
-//        Log.e("TestVC", "viewWillAppear")
-    }
-
-    override fun viewDidAppear() {
-        super.viewDidAppear()
-
-//        Log.e("TestVC", "viewDidAppear")
-    }
-
-    override fun viewWillDisappear() {
-        super.viewWillDisappear()
-
-//        Log.e("TestVC", "viewWillDisappear")
-    }
-
-    override fun viewDidDisappear() {
-        super.viewDidDisappear()
-
-//        Log.e("TestVC", "viewDidDisappear")
-    }
-
 }

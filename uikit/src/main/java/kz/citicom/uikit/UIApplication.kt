@@ -4,10 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.os.Handler
 import androidx.annotation.CallSuper
-import kz.citicom.uikit.tools.UIFonts
-import kz.citicom.uikit.tools.UIImage
-import kz.citicom.uikit.tools.UIScreen
-import kz.citicom.uikit.tools.UISize
 import java.io.File
 
 abstract class UIApplication : Application() {
@@ -39,13 +35,10 @@ abstract class UIApplication : Application() {
         super.onCreate()
 
         shared = this
-        UIApplication.applicationContext = this.applicationContext
+        Companion.applicationContext = this.applicationContext
         applicationHandler = Handler(this.applicationContext.mainLooper)
 
-        UIScreen.init(this)
-        UISize.init(this)
-        UIFonts.init(this)
-        UIImage.init(this)
+        UIKit.init(this)
     }
 
 }

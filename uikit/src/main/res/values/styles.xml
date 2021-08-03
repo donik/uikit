@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
+<!--    parent="@android:style/Theme.Holo.Light"-->
+    <style name="AppTheme" parent="Theme.MaterialComponents">
         <item name="android:actionBarStyle">@style/ActionBar.Transparent.TMessages.Start</item>
         <item name="android:colorBackground">@android:color/white</item>
         <item name="android:windowBackground">@android:color/white</item>
@@ -23,4 +23,21 @@
         <item name="android:title">""</item>
     </style>
 
+    <style name="UIKitTabLayout" parent="Base.Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/UIKitTabTextAppearance</item>
+    </style>
+
+    <style name="UIKitTabTextAppearance" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="textAllCaps">true</item>
+    </style>
+
+    <style name="TransparentDialog" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/ActionBar.Transparent.TMessages.Start</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
 </resources>

@@ -18,7 +18,7 @@ class ActivityContentLayout(context: Context) : FrameLayout(context) {
     private var hasCutout: Boolean = false
 
     private val backgroundPaint = Paint()
-    var behindKeyboardColor: Int = 0
+    private var behindKeyboardColor: Int = 0
 
     init {
         descendantFocusability = ViewGroup.FOCUS_AFTER_DESCENDANTS
@@ -41,8 +41,7 @@ class ActivityContentLayout(context: Context) : FrameLayout(context) {
                 invalidate()
                 return@setOnApplyWindowInsetsListener insets.consumeSystemWindowInsets()
             }
-            systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         }
     }
 

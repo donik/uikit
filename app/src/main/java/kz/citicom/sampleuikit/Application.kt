@@ -6,7 +6,7 @@ import android.util.Log
 import kz.citicom.uikit.UIApplication
 import java.io.File
 
-open class Application : UIApplication() {
+class Application : UIApplication() {
 
     override fun filesDirectory(): File {
         return File("files") //todo
@@ -18,5 +18,7 @@ open class Application : UIApplication() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Log.e("CREATE_APP", "ON CREATE APPLICATION")
     }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="header_pressed">#ff4a87b5</color>
+    <color name="base">#000000</color>
+    <color name="navigationButtonSelectorColor">#80979797</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="clear">#00FFFFFF</color>
+    <color name="item_background">#E5E5E5</color>
+    <color name="button_blue">#0FA3B1</color>
+    <color name="button_black">#333333</color>
+
+    <color name="transparent">#00000000</color>
+</resources>
