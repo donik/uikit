@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:layout_gravity="center"
-        android:background="@color/colorAccent">
+        android:layout_gravity="top"
+        android:background="#2AAC17">
 
         <TextView
             android:id="@+id/testBTN"
@@ -15,7 +15,24 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="HELLO"
-            android:textColor="@color/base" />
+            android:text="Календарь"
+            android:textColor="@color/white" />
     </FrameLayout>
-</LinearLayout>
+
+    <FrameLayout
+        android:layout_marginTop="44dp"
+        android:layout_width="match_parent"
+        android:layout_height="140dp">
+            <CalendarView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/dayContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="184dp"
+        android:background="#93bce1">
+
+    </FrameLayout>
+</FrameLayout>

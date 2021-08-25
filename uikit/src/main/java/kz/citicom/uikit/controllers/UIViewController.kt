@@ -14,7 +14,6 @@ import kz.citicom.uikit.UIActivity
 import kz.citicom.uikit.controllers.modal.ModalWindow
 import kz.citicom.uikit.controllers.navigationController.UINavigationController
 import kz.citicom.uikit.controllers.slidingController.UISlidingController
-import kz.citicom.uikit.controllers.tabBarController.UITabBarController
 import kz.citicom.uikit.presentationData.PresentationData
 import kz.citicom.uikit.tools.LayoutHelper
 import kz.citicom.uikit.tools.weak
@@ -55,24 +54,24 @@ abstract class UIViewController(
     private var _weakNavigationController: UINavigationController? = null
     var navigationController: UINavigationController?
         get() {
-            return _weakNavigationController ?: _weakTabBarController?.navigationController
+            return _weakNavigationController //?: _weakTabBarController?.navigationController
         }
         set(value) {
             _weakNavigationController = value
         }
-    private var _weakTabBarController: UITabBarController? = null
-    var tabBarController: UITabBarController?
-        get() {
-            return _weakTabBarController ?: _weakNavigationController?.tabBarController
-        }
-        set(value) {
-            _weakTabBarController = value
-        }
+//    private var _weakTabBarController: UITabBarController? = null
+//    var tabBarController: UITabBarController?
+//        get() {
+//            return _weakTabBarController ?: _weakNavigationController?.tabBarController
+//        }
+//        set(value) {
+//            _weakTabBarController = value
+//        }
     private var _weakSlidingController: UISlidingController? = null
     var slidingController: UISlidingController?
         get() {
             return _weakSlidingController ?: _weakNavigationController?.slidingController
-            ?: _weakTabBarController?.slidingController
+            //?: _weakTabBarController?.slidingController
         }
         set(value) {
             _weakSlidingController = value
@@ -177,7 +176,7 @@ abstract class UIViewController(
         this.isDestroyed = true
         this._weakContext.clear()
         this.navigationController = null
-        this.tabBarController = null
+//        this.tabBarController = null
         this.slidingController = null
     }
 
