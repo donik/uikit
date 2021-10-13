@@ -181,7 +181,11 @@ abstract class UIViewController(
     }
 
     open fun present(viewController: UIViewController) {
-        Log.e("PRESENT", "PRESENT CONTROLLER ${viewController.controllerID}")
+        val dialog = ModalWindow(
+            context,
+            viewController
+        )
+        dialog.show()
     }
 
     open fun containerLayoutUpdated() {

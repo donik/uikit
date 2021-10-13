@@ -64,6 +64,7 @@ class ModalWindow<T : UIViewController>(context: Context, controller: T) :
             this.weakController?.view?.alpha = 0.3f + it * 0.7f
         }, completion = {
             this.weakController?.viewDidAppear()
+            this.weakController?.modalWindow = null
         })
     }
 

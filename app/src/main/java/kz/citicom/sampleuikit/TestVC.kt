@@ -18,18 +18,12 @@ class TestVC(context: UIActivity, open val index: Int = 0) :
     @BindView(R.id.testBTN)
     lateinit var buttonTextView: TextView
 
-    @BindView(R.id.dayContent)
-    lateinit var dayContent: FrameLayout
-
     override fun loadView() {
         super.loadView()
 
         Log.e("LOAD", "LOAD TEST")
 
         this.buttonTextView.setText("HELLO ${index}")
-
-        val dayView = DayListView(context)
-        this.dayContent.addView(dayView)
     }
 
     override fun getLayoutRes(): Int {
@@ -44,15 +38,21 @@ class TestVC(context: UIActivity, open val index: Int = 0) :
     fun clickTest() {
         Log.e("CLICKED", "TEST BTN CLICKED!!!")
 //        navigationController?.push(TestVC(this.context as? UIActivity ?: return, index + 1))
-//        present()
-        val dialog = ModalWindow(
-            context,
+        present(
             UINavigationController(
                 context as? UIActivity ?: return,
                 arrayListOf(TestModalWithAnimationVC(context as? UIActivity ?: return)),
                 presentationData
             )
         )
-        dialog.show()
+//        val dialog = ModalWindow(
+//            context,
+//            UINavigationController(
+//                context as? UIActivity ?: return,
+//                arrayListOf(TestModalWithAnimationVC(context as? UIActivity ?: return)),
+//                presentationData
+//            )
+//        )
+//        dialog.show()
     }
 }

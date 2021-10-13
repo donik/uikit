@@ -278,15 +278,19 @@ class UINavigationControllerTransitionCoordinator(
             if (forward) {
                 val shiftX = -(this.foregroundContentView.measuredWidth.toFloat() * TRANSLATION_FACTOR)
 
-                this.backgroundContentView.translationX =
-                    (1 - factor) * this.backgroundContentView.measuredWidth.toFloat()
+                this.backgroundContentView.translationX = (1 - factor) * this.backgroundContentView.measuredWidth.toFloat()
                 this.foregroundContentView.translationX = shiftX * factor
+                this.foregroundContentView.scaleX = 0.95f + 0.05f * (1 - factor)
+                this.foregroundContentView.scaleY = 0.95f + 0.05f * (1 - factor)
             } else {
                 val shiftX = -(this.backgroundContentView.measuredWidth.toFloat() * TRANSLATION_FACTOR)
 
                 this.foregroundContentView.translationX =
                     factor * this.foregroundContentView.measuredWidth.toFloat()
                 this.backgroundContentView.translationX = (1 - factor) * shiftX
+
+                this.backgroundContentView.scaleX = 0.95f + 0.05f * factor
+                this.backgroundContentView.scaleY = 0.95f + 0.05f * factor
             }
         }
 
@@ -342,6 +346,10 @@ class UINavigationControllerTransitionCoordinator(
         this.backgroundContentView.translationX = 0.0f
         this.foregroundContentView.alpha = 1.0f
         this.backgroundContentView.alpha = 1.0f
+        this.foregroundContentView.scaleX = 1.0f
+        this.backgroundContentView.scaleX = 1.0f
+        this.foregroundContentView.scaleY = 1.0f
+        this.backgroundContentView.scaleX = 1.0f
         this.foregroundContentView.bringToFront()
 
         this.foregroundContentView.layoutIfRequested()
